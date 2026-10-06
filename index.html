@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="en-NZ" class="dark h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Spirograph Studio - Parametric Maths & Art</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Inter & JetBrains Mono Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#f0f9ff',
+              500: '#06b6d4',
+              600: '#0891b2',
+              700: '#0e7490',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      user-select: none;
+    }
+    /* Compact Scrollbars */
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(156, 163, 175, 0.3);
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(156, 163, 175, 0.6);
+    }
+    .glass-panel {
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    canvas {
+      touch-action: none;
+    }
+  </style>
+</head>
+<body class="bg-gray-950 text-gray-100 h-full flex flex-col font-sans antialiased transition-colors duration-300">
+
+  <!-- Header Bar -->
+  <header class="h-12 min-h-[48px] px-4 border-b border-gray-800 bg-gray-900/90 dark:bg-gray-900/90 bg-white/90 text-gray-900 dark:text-white flex items-center justify-between shrink-0 glass-panel z-20">
+    <div class="flex items-center space-x-2.5">
+      <div class="w-7 h-7 rounded-lg bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center shadow-md shadow-cyan-500/20">
+        <i class="fa-solid fa-snowflake text-white text-sm"></i>
+      </div>
+      <div>
+        <h1 class="font-bold text-sm tracking-tight leading-none">Spirograph Studio</h1>
+        <p class="text-[10px] text-gray-500 dark:text-gray-400 leading-tight">Parametric Visualiser & Maths Explorer</p>
+      </div>
+    </div>
+
+    <!-- Right Header Quick Controls -->
+    <div class="flex items-center space-x-2">
+      <div class="hidden md:flex items-center space-x-3 px-3 py-1 rounded-lg bg-gray-800/60 border border-gray-700/50 text-xs">
+        <span class="text-gray-400">Petals: <strong id="calc-petals" class="text-cyan-400 font-mono">9</strong></span>
+        <span class="text-gray-600 dark:text-gray-600">|</span>
+        <span class="text-gray-400">Full Turns: <strong id="calc-rotations" class="text-indigo-400 font-mono">4</strong></span>
+      </div>
+
+      <button id="btn-maths-modal" class="px-2.5 py-1 text-xs font-medium rounded-lg bg-cyan-500/10 text-cyan-400 hover:bg-cyan-500/20 border border-cyan-500/20 transition flex items-center space-x-1">
+        <i class="fa-solid fa-graduation-cap"></i>
+        <span>Learn Maths</span>
+      </button>
+
+      <!-- Theme Switcher -->
+      <button id="btn-theme-toggle" class="p-1.5 rounded-lg bg-gray-800 text-gray-300 hover:bg-gray-700 transition" title="Toggle Theme">
+        <i class="fa-solid fa-sun text-amber-500 dark:hidden text-xs"></i>
+        <i class="fa-solid fa-moon text-indigo-400 hidden dark:block text-xs"></i>
+      </button>
+
+      <!-- Export Button -->
+      <button id="btn-export" class="px-2.5 py-1 text-xs font-semibold rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-600/20 transition flex items-center space-x-1">
+        <i class="fa-solid fa-download"></i>
+        <span>Export</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Workspace -->
+  <main class="flex-1 flex flex-col md:flex-row overflow-hidden relative">
+
+    <!-- LEFT PANEL: Tabbed Controls -->
+    <aside class="w-full md:w-80 lg:w-96 border-r border-gray-800 bg-gray-900/60 flex flex-col h-1/2 md:h-full shrink-0 z-10">
+
+      <!-- Navigation Tabs -->
+      <div class="flex border-b border-gray-800 bg-gray-900/80 text-xs font-medium">
+        <button id="tab-gear-btn" class="flex-1 py-2.5 border-b-2 border-cyan-500 text-cyan-400 font-semibold flex items-center justify-center space-x-1.5 transition">
+          <i class="fa-solid fa-gear"></i>
+          <span>Gear Wheels</span>
+        </button>
+        <button id="tab-style-btn" class="flex-1 py-2.5 border-b-2 border-transparent text-gray-400 hover:text-gray-200 flex items-center justify-center space-x-1.5 transition">
+          <i class="fa-solid fa-palette"></i>
+          <span>Style & Pen</span>
+        </button>
+        <button id="tab-layers-btn" class="flex-1 py-2.5 border-b-2 border-transparent text-gray-400 hover:text-gray-200 flex items-center justify-center space-x-1.5 transition relative">
+          <i class="fa-solid fa-layer-group"></i>
+          <span>Layers</span>
+          <span id="badge-layer-count" class="ml-1 text-[10px] px-1.5 py-0.2 rounded-full bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">0</span>
+        </button>
+      </div>
+
+      <!-- Tab Content Area -->
+      <div class="flex-1 overflow-y-auto p-4 space-y-4">
+
+        <!-- TAB 1: Gear Parameters -->
+        <div id="tab-gear" class="space-y-4">
+          <!-- Wheel Placement Switcher -->
+          <div>
+            <label class="block text-xs font-medium text-gray-400 mb-1.5">Wheel Placement (Mechanism)</label>
+            <div class="grid grid-cols-2 gap-1.5 p-1 bg-gray-950 rounded-xl border border-gray-800">
+              <button id="type-inside" class="py-1.5 text-xs font-semibold rounded-lg transition shadow-sm bg-gray-800 text-cyan-400">
+                Inside (Hypotrochoid)
+              </button>
+              <button id="type-outside" class="py-1.5 text-xs font-semibold rounded-lg transition text-gray-400 hover:text-white">
+                Outside (Epitrochoid)
+              </button>
+            </div>
+          </div>
+
+          <!-- Outer Ring Radius (R) -->
+          <div>
+            <div class="flex justify-between items-center mb-1">
+              <label for="input-R" class="text-xs font-medium text-gray-300">Fixed Outer Ring Radius (<span class="font-mono text-cyan-400">R</span>)</label>
+              <input type="number" id="num-R" min="10" max="400" value="180" class="w-14 px-1.5 py-0.5 text-xs text-right rounded border border-gray-700 bg-gray-950 text-white font-mono">
+            </div>
+            <input type="range" id="input-R" min="10" max="400" value="180" class="w-full accent-cyan-500 h-1.5 bg-gray-800 rounded-lg appearance-none cursor-pointer">
+          </div>
+
+          <!-- Rolling Wheel Radius (r) -->
+          <div>
+            <div class="flex justify-between items-center mb-1">
+              <label for="input-r" class="text-xs font-medium text-gray-300">Rolling Wheel Radius (<span class="font-mono text-indigo-400">r</span>)</label>
+              <input type="number" id="num-r" min="5" max="300" value="80" class="w-14 px-1.5 py-0.5 text-xs text-right rounded border border-gray-700 bg-gray-950 text-white font-mono">
+            </div>
+            <input type="range" id="input-r" min="5" max="300" value="80" class="w-full accent-indigo-500 h-1.5 bg-gray-800 rounded-lg appearance-none cursor-pointer">
+          </div>
+
+          <!-- Pen Hole Distance (d) -->
+          <div>
+            <div class="flex justify-between items-center mb-1">
+              <div class="flex items-center space-x-1">
+                <label for="input-d" class="text-xs font-medium text-gray-300">Pen Hole Distance (<span class="font-mono text-rose-400">d</span>)</label>
+                <span id="extended-indicator" class="hidden text-[9px] px-1 py-0.1 rounded bg-rose-500/10 text-rose-400 font-semibold border border-rose-500/20">d &gt; r</span>
+              </div>
+              <input type="number" id="num-d" min="0" max="400" value="100" class="w-14 px-1.5 py-0.5 text-xs text-right rounded border border-gray-700 bg-gray-950 text-white font-mono">
+            </div>
+            <input type="range" id="input-d" min="0" max="400" value="100" class="w-full accent-rose-500 h-1.5 bg-gray-800 rounded-lg appearance-none cursor-pointer">
+          </div>
+
+          <!-- Presets Dropdown Selector -->
+          <div class="pt-2 border-t border-gray-800">
+            <label class="block text-xs font-medium text-gray-400 mb-1.5">Load Geometry Preset</label>
+            <select id="preset-selector" class="w-full px-2.5 py-1.5 text-xs rounded-xl border border-gray-700 bg-gray-950 text-gray-200 focus:outline-none focus:border-cyan-500">
+              <option value="">-- Choose Preset --</option>
+              <option value="star">Classic 5-Petal Star (Hypo)</option>
+              <option value="extended-wild">Extended Wild Orbit (d > r)</option>
+              <option value="sunburst">Epitrochoid Sunburst (Epi)</option>
+              <option value="deltoid">3-Cusp Deltoid Web</option>
+              <option value="atomic">Dense Atomic Lattice</option>
+              <option value="blossom">Harmonic Floral Rosette</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- TAB 2: Style & Pen Controls -->
+        <div id="tab-style" class="space-y-4 hidden">
+          <!-- Stroke Colour Mode Selection -->
+          <div>
+            <label class="block text-xs font-medium text-gray-400 mb-1.5">Stroke Colour Mode</label>
+            <div class="grid grid-cols-3 gap-1.5">
+              <button id="color-mode-solid" class="py-1 px-2 text-xs font-medium rounded-lg border border-cyan-500 bg-cyan-500/10 text-cyan-400">Solid</button>
+              <button id="color-mode-rainbow" class="py-1 px-2 text-xs font-medium rounded-lg border border-gray-700 text-gray-300 hover:border-gray-500">Spectral</button>
+              <button id="color-mode-gradient" class="py-1 px-2 text-xs font-medium rounded-lg border border-gray-700 text-gray-300 hover:border-gray-500">Gradient</button>
+            </div>
+          </div>
+
+          <!-- Solid Colour Selector -->
+          <div id="solid-color-container" class="flex items-center justify-between">
+            <label class="text-xs font-medium text-gray-300">Curve Colour</label>
+            <input type="color" id="input-color-1" value="#06b6d4" class="w-7 h-7 rounded cursor-pointer bg-transparent border-0">
+          </div>
+
+          <!-- Gradient Colours Selector -->
+          <div id="gradient-color-container" class="hidden flex-col space-y-2">
+            <div class="flex items-center justify-between">
+              <label class="text-xs font-medium text-gray-300">Gradient Start & End</label>
+              <div class="flex items-center space-x-2">
+                <input type="color" id="input-grad-1" value="#06b6d4" class="w-7 h-7 rounded cursor-pointer bg-transparent border-0">
+                <input type="color" id="input-grad-2" value="#ec4899" class="w-7 h-7 rounded cursor-pointer bg-transparent border-0">
+              </div>
+            </div>
+          </div>
+
+          <!-- Line Thickness & Opacity -->
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <div class="flex justify-between items-center mb-1">
+                <label class="text-xs font-medium text-gray-300">Thickness</label>
+                <span id="val-linewidth" class="text-[11px] font-mono text-gray-400">1.8px</span>
+              </div>
+              <input type="range" id="input-linewidth" min="0.5" max="8" step="0.1" value="1.8" class="w-full accent-cyan-500 h-1.5 bg-gray-800 rounded-lg appearance-none cursor-pointer">
+            </div>
+            <div>
+              <div class="flex justify-between items-center mb-1">
+                <label class="text-xs font-medium text-gray-300">Opacity</label>
+                <span id="val-opacity" class="text-[11px] font-mono text-gray-400">90%</span>
+              </div>
+              <input type="range" id="input-opacity" min="0.1" max="1" step="0.05" value="0.9" class="w-full accent-cyan-500 h-1.5 bg-gray-800 rounded-lg appearance-none cursor-pointer">
+            </div>
+          </div>
+
+          <!-- Resolution -->
+          <div>
+            <div class="flex justify-between items-center mb-1">
+              <label class="text-xs font-medium text-gray-300">Curve Smoothness / Resolution</label>
+              <span id="val-resolution" class="text-[11px] font-mono text-gray-400">High</span>
+            </div>
+            <input type="range" id="input-resolution" min="1" max="5" step="1" value="4" class="w-full accent-cyan-500 h-1.5 bg-gray-800 rounded-lg appearance-none cursor-pointer">
+          </div>
+
+          <!-- Show Rolling Gear Guides -->
+          <div class="flex items-center justify-between pt-1">
+            <span class="text-xs font-medium text-gray-300">Show Rolling Wheel & Arm Guides</span>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" id="chk-guides" class="sr-only peer" checked>
+              <div class="w-8 h-4 bg-gray-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-cyan-500"></div>
+            </label>
+          </div>
+        </div>
+
+        <!-- TAB 3: Layer Management Stack -->
+        <div id="tab-layers" class="space-y-3 hidden">
+          <div class="flex items-center justify-between pb-2 border-b border-gray-800">
+            <span class="text-xs font-medium text-gray-400">Composed Layers</span>
+            <button id="btn-clear-layers" class="text-[11px] text-gray-400 hover:text-rose-400 transition">
+              Clear All Layers
+            </button>
+          </div>
+
+          <div id="layers-list" class="space-y-2 max-h-52 overflow-y-auto pr-1">
+            <div id="empty-layers-msg" class="text-center py-6 text-xs text-gray-500 italic">
+              No saved layers. Click 'Add Layer' to stack overlapping curves.
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Sidebar Bottom Action Panel -->
+      <div class="p-3 border-t border-gray-800 bg-gray-900/90 space-y-2.5 shrink-0">
+
+        <!-- Animation Speed Control & Progress -->
+        <div class="space-y-1.5 p-2 rounded-xl bg-gray-950/80 border border-gray-800">
+          <div class="flex justify-between items-center text-[11px]">
+            <span class="text-gray-400 flex items-center space-x-1">
+              <i class="fa-solid fa-gauge-high text-cyan-400"></i>
+              <span>Tracing Speed</span>
+            </span>
+            <span id="val-speed" class="font-mono text-cyan-400 font-semibold">Medium</span>
+          </div>
+          <input type="range" id="input-speed" min="1" max="100" value="45" class="w-full accent-cyan-500 h-1.5 bg-gray-800 rounded-lg appearance-none cursor-pointer">
+
+          <!-- Loop Progress Bar -->
+          <div class="space-y-1 pt-1">
+            <div class="flex justify-between text-[10px] text-gray-400">
+              <span>Loop Progress</span>
+              <span id="progress-text" class="font-mono text-indigo-400">0%</span>
+            </div>
+            <div class="w-full h-1.5 bg-gray-800 rounded-full overflow-hidden">
+              <div id="progress-bar" class="h-full bg-gradient-to-r from-cyan-500 to-indigo-500 w-0 transition-all duration-75"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Primary Action Buttons -->
+        <div class="grid grid-cols-3 gap-1.5">
+          <button id="btn-animate" class="py-2 px-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-semibold text-xs shadow-md shadow-cyan-500/20 transition flex items-center justify-center space-x-1">
+            <i id="btn-animate-icon" class="fa-solid fa-play"></i>
+            <span id="btn-animate-text">Animate</span>
+          </button>
+
+          <button id="btn-instant" class="py-2 px-2 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-200 font-semibold text-xs border border-gray-700 transition flex items-center justify-center space-x-1" title="Render entire curve instantly">
+            <i class="fa-solid fa-bolt text-amber-400"></i>
+            <span>Instant</span>
+          </button>
+
+          <button id="btn-add-layer" class="py-2 px-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs shadow-md shadow-indigo-600/20 transition flex items-center justify-center space-x-1">
+            <i class="fa-solid fa-layer-group"></i>
+            <span>Add Layer</span>
+          </button>
+        </div>
+
+        <div class="flex items-center space-x-1.5">
+          <button id="btn-undo" class="flex-1 py-1.5 text-[11px] font-medium rounded-lg border border-gray-800 text-gray-300 hover:bg-gray-800 transition flex items-center justify-center space-x-1">
+            <i class="fa-solid fa-rotate-left"></i>
+            <span>Undo</span>
+          </button>
+          <button id="btn-auto-pattern" class="flex-1 py-1.5 text-[11px] font-medium rounded-lg border border-gray-800 text-gray-300 hover:bg-gray-800 transition flex items-center justify-center space-x-1">
+            <i class="fa-solid fa-arrows-spin text-cyan-400"></i>
+            <span>Rosette</span>
+          </button>
+          <button id="btn-clear" class="flex-1 py-1.5 text-[11px] font-medium rounded-lg border border-rose-500/30 text-rose-400 hover:bg-rose-500/10 transition flex items-center justify-center space-x-1">
+            <i class="fa-solid fa-trash-can"></i>
+            <span>Clear</span>
+          </button>
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- RIGHT PANEL: Canvas Workspace -->
+    <section class="flex-1 bg-gray-950 flex flex-col items-center justify-center p-3 relative h-1/2 md:h-full overflow-hidden">
+
+      <div id="canvas-container" class="relative w-full h-full max-w-[85vh] max-h-[85vh] aspect-square rounded-2xl overflow-hidden bg-gray-900 border border-gray-800 flex items-center justify-center shadow-2xl">
+        <canvas id="spiroCanvas" class="w-full h-full block cursor-crosshair"></canvas>
+
+        <!-- Live Coordinates Tracker -->
+        <div class="absolute bottom-2.5 left-2.5 bg-gray-950/80 text-gray-300 font-mono text-[10px] px-2 py-0.5 rounded-lg glass-panel border border-gray-800 pointer-events-none flex items-center space-x-2">
+          <span>X: <span id="coord-x" class="text-cyan-400">0.0</span></span>
+          <span>Y: <span id="coord-y" class="text-cyan-400">0.0</span></span>
+          <span>t: <span id="coord-t" class="text-amber-400">0.0 rad</span></span>
+        </div>
+
+        <!-- Tracing Badge -->
+        <div id="tracing-indicator" class="hidden absolute top-2.5 right-2.5 bg-cyan-500/20 text-cyan-400 border border-cyan-500/40 font-semibold text-[11px] px-2.5 py-0.5 rounded-full glass-panel flex items-center space-x-1.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping"></span>
+          <span id="tracing-status-text">Tracing Curve...</span>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Mathematical Explainer Modal -->
+  <div id="maths-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-950/80 glass-panel opacity-0 pointer-events-none transition-opacity duration-300">
+    <div class="bg-gray-900 rounded-3xl max-w-2xl w-full max-h-[85vh] flex flex-col shadow-2xl border border-gray-800 overflow-hidden transform scale-95 transition-transform duration-300" id="maths-modal-content">
+
+      <!-- Modal Header -->
+      <div class="px-5 py-3.5 border-b border-gray-800 flex items-center justify-between bg-gray-900/80">
+        <div class="flex items-center space-x-2.5">
+          <div class="w-8 h-8 rounded-xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center font-bold">
+            <i class="fa-solid fa-square-root-variable"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-white text-sm">The Maths Behind Spirographs</h3>
+            <p class="text-[11px] text-gray-400">Parametric equations, gear geometry and symmetry principles</p>
+          </div>
+        </div>
+        <button id="btn-close-maths" class="w-7 h-7 rounded-full bg-gray-800 text-gray-400 hover:text-white flex items-center justify-center transition">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
+      </div>
+
+      <!-- Modal Content -->
+      <div class="p-5 overflow-y-auto space-y-5 text-xs text-gray-300 leading-relaxed">
+        <section>
+          <h4 class="font-bold text-white text-sm mb-1.5 flex items-center space-x-1.5">
+            <i class="fa-solid fa-circle-info text-cyan-400"></i>
+            <span>What is a Spirograph Curve?</span>
+          </h4>
+          <p>
+            A mathematical spirograph models the trajectory traced out by a fixed pen point attached to a rolling wheel moving without slipping along the circumference of a stationary circular ring.
+          </p>
+          <div class="mt-2.5 grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <div class="p-3 rounded-xl bg-cyan-950/30 border border-cyan-800/50">
+              <span class="font-semibold text-cyan-300 block mb-0.5">Hypotrochoid (Inside)</span>
+              <p class="text-[11px] text-cyan-400">
+                Created when the smaller wheel rolls along the <em>inside</em> perimeter of the fixed ring radius \(R\).
+              </p>
+            </div>
+            <div class="p-3 rounded-xl bg-indigo-950/30 border border-indigo-800/50">
+              <span class="font-semibold text-indigo-300 block mb-0.5">Epitrochoid (Outside)</span>
+              <p class="text-[11px] text-indigo-400">
+                Created when the smaller wheel rolls along the <em>outside</em> exterior boundary of fixed ring radius \(R\).
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section class="space-y-2">
+          <h4 class="font-bold text-white text-sm flex items-center space-x-1.5">
+            <i class="fa-solid fa-calculator text-indigo-400"></i>
+            <span>Parametric Maths Equations</span>
+          </h4>
+          <p class="text-[11px] text-gray-400">
+            Given fixed ring radius <span class="font-mono text-cyan-400 font-bold">R</span>, rolling wheel radius <span class="font-mono text-indigo-400 font-bold">r</span>, pen distance from wheel centre <span class="font-mono text-rose-400 font-bold">d</span>, and rotation angle <span class="font-mono text-amber-400">t</span>:
+          </p>
+
+          <div class="p-3 rounded-xl bg-gray-950 font-mono text-[11px] text-gray-200 space-y-2 border border-gray-800">
+            <div>
+              <span class="text-cyan-400 font-bold block mb-0.5">Hypotrochoid Equations:</span>
+              <p class="pl-2 border-l-2 border-cyan-500">x(t) = (R - r) &middot; cos(t) + d &middot; cos((R - r) &middot; t / r)</p>
+              <p class="pl-2 border-l-2 border-cyan-500">y(t) = (R - r) &middot; sin(t) - d &middot; sin((R - r) &middot; t / r)</p>
+            </div>
+            <div class="pt-2 border-t border-gray-800">
+              <span class="text-indigo-400 font-bold block mb-0.5">Epitrochoid Equations:</span>
+              <p class="pl-2 border-l-2 border-indigo-400">x(t) = (R + r) &middot; cos(t) - d &middot; cos((R + r) &middot; t / r)</p>
+              <p class="pl-2 border-l-2 border-indigo-400">y(t) = (R + r) &middot; sin(t) - d &middot; sin((R + r) &middot; t / r)</p>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h4 class="font-bold text-white text-sm mb-1.5 flex items-center space-x-1.5">
+            <i class="fa-solid fa-infinity text-amber-400"></i>
+            <span>Symmetry & Petal Calculation (GCD)</span>
+          </h4>
+          <div class="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-[11px] text-amber-200 space-y-1">
+            <p>1. Simplify the fraction <span class="font-mono font-bold">R / r</span> using its Greatest Common Divisor <span class="font-mono font-bold">GCD(R, r)</span> to <span class="font-mono font-bold">a / b</span>.</p>
+            <p>2. The simplified numerator <span class="font-mono font-bold text-amber-400">a</span> yields total petals/lobes.</p>
+            <p>3. The simplified denominator <span class="font-mono font-bold text-amber-400">b</span> indicates the full rotations needed to close the loop.</p>
+          </div>
+        </section>
+      </div>
+
+      <div class="px-5 py-3 border-t border-gray-800 bg-gray-900/80 flex justify-end">
+        <button id="btn-close-maths-2" class="px-4 py-1.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-white font-semibold text-xs transition">
+          Close Maths Guide
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+      // State Management
+      const state = {
+        mechanism: 'inside', // 'inside' or 'outside'
+        R: 180,
+        r: 80,
+        d: 100,
+        colorMode: 'solid', // 'solid', 'rainbow', 'gradient'
+        color1: '#06b6d4',
+        grad1: '#06b6d4',
+        grad2: '#ec4899',
+        lineWidth: 1.8,
+        opacity: 0.9,
+        speed: 45, // 1 to 100
+        resolution: 4, // 1 to 5
+        showGuides: true,
+        darkMode: true,
+        layers: [], // Saved curve layers
+        
+        // Animation State
+        animating: false,
+        paused: false,
+        animationId: null,
+        currentT: 0,
+        maxT: 0
+      };
+
+      // DOM References
+      const canvas = document.getElementById('spiroCanvas');
+      const ctx = canvas.getContext('2d');
+      const canvasContainer = document.getElementById('canvas-container');
+
+      const tabGearBtn = document.getElementById('tab-gear-btn');
+      const tabStyleBtn = document.getElementById('tab-style-btn');
+      const tabLayersBtn = document.getElementById('tab-layers-btn');
+      const tabGear = document.getElementById('tab-gear');
+      const tabStyle = document.getElementById('tab-style');
+      const tabLayers = document.getElementById('tab-layers');
+
+      const typeInsideBtn = document.getElementById('type-inside');
+      const typeOutsideBtn = document.getElementById('type-outside');
+      const inputR = document.getElementById('input-R');
+      const numR = document.getElementById('num-R');
+      const inputr = document.getElementById('input-r');
+      const numr = document.getElementById('num-r');
+      const inputd = document.getElementById('input-d');
+      const numd = document.getElementById('num-d');
+      const extIndicator = document.getElementById('extended-indicator');
+      const presetSelector = document.getElementById('preset-selector');
+
+      const calcPetals = document.getElementById('calc-petals');
+      const calcRotations = document.getElementById('calc-rotations');
+
+      const colorModeSolid = document.getElementById('color-mode-solid');
+      const colorModeRainbow = document.getElementById('color-mode-rainbow');
+      const colorModeGradient = document.getElementById('color-mode-gradient');
+      const solidColorContainer = document.getElementById('solid-color-container');
+      const gradientColorContainer = document.getElementById('gradient-color-container');
+      const inputColor1 = document.getElementById('input-color-1');
+      const inputGrad1 = document.getElementById('input-grad-1');
+      const inputGrad2 = document.getElementById('input-grad-2');
+
+      const inputLineWidth = document.getElementById('input-linewidth');
+      const valLineWidth = document.getElementById('val-linewidth');
+      const inputOpacity = document.getElementById('input-opacity');
+      const valOpacity = document.getElementById('val-opacity');
+      const inputSpeed = document.getElementById('input-speed');
+      const valSpeed = document.getElementById('val-speed');
+      const inputResolution = document.getElementById('input-resolution');
+      const valResolution = document.getElementById('val-resolution');
+      const chkGuides = document.getElementById('chk-guides');
+
+      const progressBar = document.getElementById('progress-bar');
+      const progressText = document.getElementById('progress-text');
+
+      const btnAnimate = document.getElementById('btn-animate');
+      const btnAnimateText = document.getElementById('btn-animate-text');
+      const btnAnimateIcon = document.getElementById('btn-animate-icon');
+      const btnInstant = document.getElementById('btn-instant');
+      const btnAddLayer = document.getElementById('btn-add-layer');
+      const btnUndo = document.getElementById('btn-undo');
+      const btnClear = document.getElementById('btn-clear');
+      const btnAutoPattern = document.getElementById('btn-auto-pattern');
+      const btnClearLayers = document.getElementById('btn-clear-layers');
+      const layersList = document.getElementById('layers-list');
+      const emptyLayersMsg = document.getElementById('empty-layers-msg');
+      const badgeLayerCount = document.getElementById('badge-layer-count');
+
+      const coordX = document.getElementById('coord-x');
+      const coordY = document.getElementById('coord-y');
+      const coordT = document.getElementById('coord-t');
+      const tracingIndicator = document.getElementById('tracing-indicator');
+      const tracingStatusText = document.getElementById('tracing-status-text');
+
+      const btnThemeToggle = document.getElementById('btn-theme-toggle');
+      const btnExport = document.getElementById('btn-export');
+      const btnMathsModal = document.getElementById('btn-maths-modal');
+      const mathsModal = document.getElementById('maths-modal');
+      const mathsModalContent = document.getElementById('maths-modal-content');
+      const btnCloseMaths = document.getElementById('btn-close-maths');
+      const btnCloseMaths2 = document.getElementById('btn-close-maths-2');
+
+      function gcd(a, b) {
+        a = Math.abs(Math.round(a));
+        b = Math.abs(Math.round(b));
+        while (b) {
+          const t = b;
+          b = a % b;
+          a = t;
+        }
+        return a;
+      }
+
+      function calculateSymmetry(R, r) {
+        const common = gcd(R, r);
+        const numPetals = Math.round(R / common);
+        const rotations = Math.round(r / common);
+        const maxAngle = rotations * 2 * Math.PI;
+        return { numPetals, rotations, maxAngle };
+      }
+
+      function getPoint(t, params) {
+        const { R, r, d, mechanism } = params;
+        let x, y;
+        if (mechanism === 'inside') {
+          const diff = R - r;
+          x = diff * Math.cos(t) + d * Math.cos((diff * t) / r);
+          y = diff * Math.sin(t) - d * Math.sin((diff * t) / r);
+        } else {
+          const sum = R + r;
+          x = sum * Math.cos(t) - d * Math.cos((sum * t) / r);
+          y = sum * Math.sin(t) - d * Math.sin((sum * t) / r);
+        }
+        return { x, y };
+      }
+
+      function getWheelCenter(t, params) {
+        const { R, r, mechanism } = params;
+        if (mechanism === 'inside') {
+          return {
+            x: (R - r) * Math.cos(t),
+            y: (R - r) * Math.sin(t)
+          };
+        } else {
+          return {
+            x: (R + r) * Math.cos(t),
+            y: (R + r) * Math.sin(t)
+          };
+        }
+      }
+
+      function setupCanvas() {
+        const dpr = window.devicePixelRatio || 1;
+        const rect = canvasContainer.getBoundingClientRect();
+        canvas.width = rect.width * dpr;
+        canvas.height = rect.height * dpr;
+        ctx.resetTransform();
+        ctx.scale(dpr, dpr);
+        render();
+      }
+
+      window.addEventListener('resize', setupCanvas);
+
+      function render() {
+        const rect = canvasContainer.getBoundingClientRect();
+        const width = rect.width;
+        const height = rect.height;
+        const centerX = width / 2;
+        const centerY = height / 2;
+
+        ctx.fillStyle = state.darkMode ? '#030712' : '#ffffff';
+        ctx.fillRect(0, 0, width, height);
+
+        // Render Stored Layers
+        state.layers.forEach(layer => {
+          drawCurvePath(ctx, layer, centerX, centerY, layer.maxT);
+        });
+
+        // Active Animation / Current Curve
+        if (state.animating) {
+          drawCurvePath(ctx, state, centerX, centerY, state.currentT);
+          if (state.showGuides) {
+            drawMechanicalGuides(ctx, state, centerX, centerY, state.currentT);
+          }
+        } else {
+          drawCurvePath(ctx, state, centerX, centerY, state.maxT);
+          if (state.showGuides) {
+            drawMechanicalGuides(ctx, state, centerX, centerY, state.maxT);
+          }
+        }
+
+        updateUIStats();
+      }
+
+      function drawCurvePath(context, layerParams, cx, cy, targetT) {
+        const { R, r, d, mechanism, colorMode, color1, grad1, grad2, lineWidth, opacity, resolution } = layerParams;
+        const dt = (0.05 / resolution);
+
+        context.save();
+        context.translate(cx, cy);
+        context.lineWidth = lineWidth;
+        context.globalAlpha = opacity;
+        context.lineCap = 'round';
+        context.lineJoin = 'round';
+
+        let prevPoint = getPoint(0, layerParams);
+
+        if (colorMode === 'solid') {
+          context.strokeStyle = color1;
+          context.beginPath();
+          context.moveTo(prevPoint.x, prevPoint.y);
+          for (let t = dt; t <= targetT; t += dt) {
+            const pt = getPoint(t, layerParams);
+            context.lineTo(pt.x, pt.y);
+          }
+          context.stroke();
+        } else if (colorMode === 'rainbow') {
+          for (let t = dt; t <= targetT; t += dt) {
+            const pt = getPoint(t, layerParams);
+            const hue = (t * 50) % 360;
+            context.strokeStyle = `hsl(${hue}, 90%, 60%)`;
+            context.beginPath();
+            context.moveTo(prevPoint.x, prevPoint.y);
+            context.lineTo(pt.x, pt.y);
+            context.stroke();
+            prevPoint = pt;
+          }
+        } else if (colorMode === 'gradient') {
+          for (let t = dt; t <= targetT; t += dt) {
+            const pt = getPoint(t, layerParams);
+            const progress = t / layerParams.maxT;
+            context.strokeStyle = interpolateColor(grad1, grad2, progress);
+            context.beginPath();
+            context.moveTo(prevPoint.x, prevPoint.y);
+            context.lineTo(pt.x, pt.y);
+            context.stroke();
+            prevPoint = pt;
+          }
+        }
+
+        context.restore();
+      }
+
+      function drawMechanicalGuides(context, params, cx, cy, t) {
+        const { R, r, d, mechanism } = params;
+        const penPt = getPoint(t, params);
+        const wheelCenter = getWheelCenter(t, params);
+
+        context.save();
+        context.translate(cx, cy);
+
+        // Fixed Outer Ring Guide
+        context.strokeStyle = state.darkMode ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.15)';
+        context.lineWidth = 1.2;
+        context.setLineDash([4, 4]);
+        context.beginPath();
+        context.arc(0, 0, R, 0, Math.PI * 2);
+        context.stroke();
+
+        // Rolling Wheel Circle Guide
+        context.strokeStyle = state.darkMode ? 'rgba(6, 182, 212, 0.5)' : 'rgba(8, 145, 178, 0.5)';
+        context.lineWidth = 1.2;
+        context.setLineDash([]);
+        context.beginPath();
+        context.arc(wheelCenter.x, wheelCenter.y, r, 0, Math.PI * 2);
+        context.stroke();
+
+        // Wheel Axis & Centre Marker
+        context.fillStyle = state.darkMode ? '#ffffff' : '#000000';
+        context.beginPath();
+        context.arc(0, 0, 2.5, 0, Math.PI * 2);
+        context.arc(wheelCenter.x, wheelCenter.y, 2.5, 0, Math.PI * 2);
+        context.fill();
+
+        // Pen Arm / Hole Vector
+        context.strokeStyle = 'rgba(244, 63, 94, 0.8)';
+        context.lineWidth = 1.4;
+        context.beginPath();
+        context.moveTo(wheelCenter.x, wheelCenter.y);
+        context.lineTo(penPt.x, penPt.y);
+        context.stroke();
+
+        // Pen Tip Pointer
+        context.fillStyle = '#f43f5e';
+        context.beginPath();
+        context.arc(penPt.x, penPt.y, 4.5, 0, Math.PI * 2);
+        context.fill();
+
+        context.restore();
+
+        // Update live coordinates readout
+        coordX.textContent = penPt.x.toFixed(1);
+        coordY.textContent = penPt.y.toFixed(1);
+        coordT.textContent = t.toFixed(2) + ' rad';
+      }
+
+      function interpolateColor(color1, color2, factor) {
+        const c1 = hexToRgb(color1);
+        const c2 = hexToRgb(color2);
+        const r = Math.round(c1.r + factor * (c2.r - c1.r));
+        const g = Math.round(c1.g + factor * (c2.g - c1.g));
+        const b = Math.round(c1.b + factor * (c2.b - c1.b));
+        return `rgb(${r}, ${g}, ${b})`;
+      }
+
+      function hexToRgb(hex) {
+        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return result ? {
+          r: parseInt(result[1], 16),
+          g: parseInt(result[2], 16),
+          b: parseInt(result[3], 16)
+        } : { r: 0, g: 0, b: 0 };
+      }
+
+      function startAnimation() {
+        const { maxAngle } = calculateSymmetry(state.R, state.r);
+        state.maxT = maxAngle;
+
+        if (state.paused) {
+          state.paused = false;
+          state.animating = true;
+          updateAnimationUI();
+          runAnimationLoop();
+          return;
+        }
+
+        state.currentT = 0;
+        state.animating = true;
+        state.paused = false;
+
+        updateAnimationUI();
+        runAnimationLoop();
+      }
+
+      function pauseAnimation() {
+        state.paused = true;
+        state.animating = false;
+        cancelAnimationFrame(state.animationId);
+        updateAnimationUI();
+      }
+
+      function stopAnimation() {
+        state.animating = false;
+        state.paused = false;
+        cancelAnimationFrame(state.animationId);
+        state.currentT = 0;
+        updateAnimationUI();
+        render();
+      }
+
+      function runAnimationLoop() {
+        if (!state.animating || state.paused) return;
+
+        // Dynamic step scaling based on speed input slider
+        const speedFactor = (state.speed / 100);
+        const stepAngle = speedFactor * (0.05 + state.resolution * 0.02);
+
+        state.currentT += stepAngle;
+
+        const pct = Math.min(100, Math.round((state.currentT / state.maxT) * 100));
+        progressBar.style.width = `${pct}%`;
+        progressText.textContent = `${pct}%`;
+
+        if (state.currentT >= state.maxT) {
+          state.currentT = state.maxT;
+          state.animating = false;
+          state.paused = false;
+          updateAnimationUI();
+          render();
+        } else {
+          render();
+          state.animationId = requestAnimationFrame(runAnimationLoop);
+        }
+      }
+
+      function updateAnimationUI() {
+        if (state.animating) {
+          tracingIndicator.classList.remove('hidden');
+          tracingStatusText.textContent = 'Tracing Curve...';
+          btnAnimateText.textContent = 'Pause';
+          btnAnimateIcon.className = 'fa-solid fa-pause';
+        } else if (state.paused) {
+          tracingIndicator.classList.remove('hidden');
+          tracingStatusText.textContent = 'Paused';
+          btnAnimateText.textContent = 'Resume';
+          btnAnimateIcon.className = 'fa-solid fa-play';
+        } else {
+          tracingIndicator.classList.add('hidden');
+          btnAnimateText.textContent = 'Animate';
+          btnAnimateIcon.className = 'fa-solid fa-play';
+        }
+      }
+
+      function switchTab(activeTab) {
+        tabGearBtn.className = 'flex-1 py-2.5 border-b-2 text-gray-400 hover:text-gray-200 border-transparent flex items-center justify-center space-x-1.5 transition';
+        tabStyleBtn.className = 'flex-1 py-2.5 border-b-2 text-gray-400 hover:text-gray-200 border-transparent flex items-center justify-center space-x-1.5 transition';
+        tabLayersBtn.className = 'flex-1 py-2.5 border-b-2 text-gray-400 hover:text-gray-200 border-transparent flex items-center justify-center space-x-1.5 transition relative';
+
+        tabGear.classList.add('hidden');
+        tabStyle.classList.add('hidden');
+        tabLayers.classList.add('hidden');
+
+        if (activeTab === 'gear') {
+          tabGearBtn.className = 'flex-1 py-2.5 border-b-2 border-cyan-500 text-cyan-400 font-semibold flex items-center justify-center space-x-1.5 transition';
+          tabGear.classList.remove('hidden');
+        } else if (activeTab === 'style') {
+          tabStyleBtn.className = 'flex-1 py-2.5 border-b-2 border-cyan-500 text-cyan-400 font-semibold flex items-center justify-center space-x-1.5 transition';
+          tabStyle.classList.remove('hidden');
+        } else if (activeTab === 'layers') {
+          tabLayersBtn.className = 'flex-1 py-2.5 border-b-2 border-cyan-500 text-cyan-400 font-semibold flex items-center justify-center space-x-1.5 transition relative';
+          tabLayers.classList.remove('hidden');
+        }
+      }
+
+      tabGearBtn.addEventListener('click', () => switchTab('gear'));
+      tabStyleBtn.addEventListener('click', () => switchTab('style'));
+      tabLayersBtn.addEventListener('click', () => switchTab('layers'));
+
+      function addCurrentToLayers() {
+        const { maxAngle } = calculateSymmetry(state.R, state.r);
+        const layerCopy = {
+          id: Date.now(),
+          R: state.R,
+          r: state.r,
+          d: state.d,
+          mechanism: state.mechanism,
+          colorMode: state.colorMode,
+          color1: state.color1,
+          grad1: state.grad1,
+          grad2: state.grad2,
+          lineWidth: state.lineWidth,
+          opacity: state.opacity,
+          resolution: state.resolution,
+          maxT: maxAngle
+        };
+        state.layers.push(layerCopy);
+        updateLayersList();
+        render();
+      }
+
+      function updateLayersList() {
+        badgeLayerCount.textContent = state.layers.length;
+
+        if (state.layers.length === 0) {
+          emptyLayersMsg.classList.remove('hidden');
+          layersList.innerHTML = '';
+          layersList.appendChild(emptyLayersMsg);
+          return;
+        }
+
+        emptyLayersMsg.classList.add('hidden');
+        layersList.innerHTML = '';
+
+        state.layers.forEach((layer) => {
+          const item = document.createElement('div');
+          item.className = 'p-2 rounded-xl bg-gray-950 border border-gray-800 flex items-center justify-between text-xs transition';
+
+          const colorBadge = layer.colorMode === 'solid' 
+            ? `<span class="w-3 h-3 rounded-full border border-gray-700" style="background-color: ${layer.color1}"></span>`
+            : layer.colorMode === 'gradient'
+            ? `<span class="w-3 h-3 rounded-full border border-gray-700" style="background: linear-gradient(135deg, ${layer.grad1}, ${layer.grad2})"></span>`
+            : `<span class="w-3 h-3 rounded-full border border-gray-700 bg-gradient-to-r from-red-500 via-green-500 to-blue-500"></span>`;
+
+          item.innerHTML = `
+            <div class="flex items-center space-x-2">
+              ${colorBadge}
+              <div>
+                <span class="font-mono font-semibold text-gray-200">R:${layer.R} r:${layer.r} d:${layer.d}</span>
+                <span class="text-[10px] text-gray-400 capitalize block">${layer.mechanism} (${layer.colorMode})</span>
+              </div>
+            </div>
+            <button data-id="${layer.id}" class="btn-del-layer text-gray-400 hover:text-rose-400 transition p-1">
+              <i class="fa-solid fa-trash-can text-xs"></i>
+            </button>
+          `;
+
+          item.querySelector('.btn-del-layer').addEventListener('click', (e) => {
+            e.stopPropagation();
+            state.layers = state.layers.filter(l => l.id !== layer.id);
+            updateLayersList();
+            render();
+          });
+
+          layersList.appendChild(item);
+        });
+      }
+
+      function updateUIStats() {
+        const { numPetals, rotations, maxAngle } = calculateSymmetry(state.R, state.r);
+        state.maxT = maxAngle;
+
+        calcPetals.textContent = `${numPetals}`;
+        calcRotations.textContent = `${rotations}`;
+
+        if (state.d > state.r) {
+          extIndicator.classList.remove('hidden');
+        } else {
+          extIndicator.classList.add('hidden');
+        }
+      }
+
+      function syncInputs() {
+        numR.value = state.R;
+        inputR.value = state.R;
+        numr.value = state.r;
+        inputr.value = state.r;
+        numd.value = state.d;
+        inputd.value = state.d;
+
+        valLineWidth.textContent = `${state.lineWidth}px`;
+        valOpacity.textContent = `${Math.round(state.opacity * 100)}%`;
+        valSpeed.textContent = state.speed > 80 ? 'Ultra-Fast' : state.speed > 50 ? 'Fast' : state.speed > 25 ? 'Medium' : 'Slow';
+        valResolution.textContent = state.resolution >= 4 ? 'High' : state.resolution === 3 ? 'Medium' : 'Low';
+
+        if (state.mechanism === 'inside') {
+          typeInsideBtn.className = 'py-1.5 text-xs font-semibold rounded-lg transition shadow-sm bg-gray-800 text-cyan-400';
+          typeOutsideBtn.className = 'py-1.5 text-xs font-semibold rounded-lg transition text-gray-400 hover:text-white';
+        } else {
+          typeOutsideBtn.className = 'py-1.5 text-xs font-semibold rounded-lg transition shadow-sm bg-gray-800 text-indigo-400';
+          typeInsideBtn.className = 'py-1.5 text-xs font-semibold rounded-lg transition text-gray-400 hover:text-white';
+        }
+
+        updateUIStats();
+        render();
+      }
+
+      typeInsideBtn.addEventListener('click', () => { stopAnimation(); state.mechanism = 'inside'; syncInputs(); });
+      typeOutsideBtn.addEventListener('click', () => { stopAnimation(); state.mechanism = 'outside'; syncInputs(); });
+
+      inputR.addEventListener('input', (e) => { stopAnimation(); state.R = parseInt(e.target.value); syncInputs(); });
+      numR.addEventListener('change', (e) => { stopAnimation(); state.R = parseInt(e.target.value); syncInputs(); });
+
+      inputr.addEventListener('input', (e) => { stopAnimation(); state.r = parseInt(e.target.value); syncInputs(); });
+      numr.addEventListener('change', (e) => { stopAnimation(); state.r = parseInt(e.target.value); syncInputs(); });
+
+      inputd.addEventListener('input', (e) => { stopAnimation(); state.d = parseInt(e.target.value); syncInputs(); });
+      numd.addEventListener('change', (e) => { stopAnimation(); state.d = parseInt(e.target.value); syncInputs(); });
+
+      inputLineWidth.addEventListener('input', (e) => { state.lineWidth = parseFloat(e.target.value); syncInputs(); });
+      inputOpacity.addEventListener('input', (e) => { state.opacity = parseFloat(e.target.value); syncInputs(); });
+      inputSpeed.addEventListener('input', (e) => { state.speed = parseInt(e.target.value); syncInputs(); });
+      inputResolution.addEventListener('input', (e) => { state.resolution = parseInt(e.target.value); syncInputs(); });
+      chkGuides.addEventListener('change', (e) => { state.showGuides = e.target.checked; render(); });
+
+      // Colour Options
+      colorModeSolid.addEventListener('click', () => {
+        state.colorMode = 'solid';
+        solidColorContainer.classList.remove('hidden');
+        gradientColorContainer.classList.add('hidden');
+        colorModeSolid.className = 'py-1 px-2 text-xs font-medium rounded-lg border border-cyan-500 bg-cyan-500/10 text-cyan-400';
+        colorModeRainbow.className = 'py-1 px-2 text-xs font-medium rounded-lg border border-gray-700 text-gray-300 hover:border-gray-500';
+        colorModeGradient.className = 'py-1 px-2 text-xs font-medium rounded-lg border border-gray-700 text-gray-300 hover:border-gray-500';
+        render();
+      });
+
+      colorModeRainbow.addEventListener('click', () => {
+        state.colorMode = 'rainbow';
+        solidColorContainer.classList.add('hidden');
+        gradientColorContainer.classList.add('hidden');
+        colorModeRainbow.className = 'py-1 px-2 text-xs font-medium rounded-lg border border-cyan-500 bg-cyan-500/10 text-cyan-400';
+        colorModeSolid.className = 'py-1 px-2 text-xs font-medium rounded-lg border border-gray-700 text-gray-300 hover:border-gray-500';
+        colorModeGradient.className = 'py-1 px-2 text-xs font-medium rounded-lg border border-gray-700 text-gray-300 hover:border-gray-500';
+        render();
+      });
+
+      colorModeGradient.addEventListener('click', () => {
+        state.colorMode = 'gradient';
+        solidColorContainer.classList.add('hidden');
+        gradientColorContainer.classList.remove('hidden');
+        gradientColorContainer.classList.add('flex');
+        colorModeGradient.className = 'py-1 px-2 text-xs font-medium rounded-lg border border-cyan-500 bg-cyan-500/10 text-cyan-400';
+        colorModeSolid.className = 'py-1 px-2 text-xs font-medium rounded-lg border border-gray-700 text-gray-300 hover:border-gray-500';
+        colorModeRainbow.className = 'py-1 px-2 text-xs font-medium rounded-lg border border-gray-700 text-gray-300 hover:border-gray-500';
+        render();
+      });
+
+      inputColor1.addEventListener('input', (e) => { state.color1 = e.target.value; render(); });
+      inputGrad1.addEventListener('input', (e) => { state.grad1 = e.target.value; render(); });
+      inputGrad2.addEventListener('input', (e) => { state.grad2 = e.target.value; render(); });
+
+      // Presets Selector
+      presetSelector.addEventListener('change', (e) => {
+        const val = e.target.value;
+        if (!val) return;
+        stopAnimation();
+
+        if (val === 'star') {
+          state.mechanism = 'inside';
+          state.R = 180;
+          state.r = 108;
+          state.d = 90;
+          state.colorMode = 'solid';
+          state.color1 = '#06b6d4';
+        } else if (val === 'extended-wild') {
+          state.mechanism = 'inside';
+          state.R = 150;
+          state.r = 90;
+          state.d = 180;
+          state.colorMode = 'rainbow';
+        } else if (val === 'sunburst') {
+          state.mechanism = 'outside';
+          state.R = 120;
+          state.r = 45;
+          state.d = 85;
+          state.colorMode = 'gradient';
+          state.grad1 = '#f59e0b';
+          state.grad2 = '#ef4444';
+        } else if (val === 'deltoid') {
+          state.mechanism = 'inside';
+          state.R = 180;
+          state.r = 60;
+          state.d = 60;
+          state.colorMode = 'solid';
+          state.color1 = '#6366f1';
+        } else if (val === 'atomic') {
+          state.mechanism = 'inside';
+          state.R = 210;
+          state.r = 67;
+          state.d = 110;
+          state.colorMode = 'rainbow';
+        } else if (val === 'blossom') {
+          state.mechanism = 'inside';
+          state.R = 200;
+          state.r = 125;
+          state.d = 100;
+          state.colorMode = 'gradient';
+          state.grad1 = '#ec4899';
+          state.grad2 = '#8b5cf6';
+        }
+
+        syncInputs();
+        presetSelector.value = '';
+      });
+
+      // Actions
+      btnAnimate.addEventListener('click', () => {
+        if (state.animating) {
+          pauseAnimation();
+        } else {
+          startAnimation();
+        }
+      });
+
+      btnInstant.addEventListener('click', () => {
+        stopAnimation();
+        const { maxAngle } = calculateSymmetry(state.R, state.r);
+        state.currentT = maxAngle;
+        progressBar.style.width = '100%';
+        progressText.textContent = '100%';
+        render();
+      });
+
+      btnAddLayer.addEventListener('click', () => {
+        addCurrentToLayers();
+      });
+
+      btnUndo.addEventListener('click', () => {
+        if (state.layers.length > 0) {
+          state.layers.pop();
+          updateLayersList();
+          render();
+        }
+      });
+
+      btnClear.addEventListener('click', () => {
+        stopAnimation();
+        state.layers = [];
+        updateLayersList();
+        render();
+      });
+
+      btnClearLayers.addEventListener('click', () => {
+        state.layers = [];
+        updateLayersList();
+        render();
+      });
+
+      btnAutoPattern.addEventListener('click', () => {
+        stopAnimation();
+        state.layers = [];
+        const baseR = state.R;
+        const baser = state.r;
+        const numRings = 5;
+
+        for (let i = 0; i < numRings; i++) {
+          const { maxAngle } = calculateSymmetry(baseR, baser);
+          const layerCopy = {
+            id: Date.now() + i,
+            R: baseR,
+            r: baser,
+            d: Math.max(10, state.d - (i * 15)),
+            mechanism: state.mechanism,
+            colorMode: 'rainbow',
+            color1: state.color1,
+            grad1: state.grad1,
+            grad2: state.grad2,
+            lineWidth: state.lineWidth,
+            opacity: 0.85,
+            resolution: state.resolution,
+            maxT: maxAngle
+          };
+          state.layers.push(layerCopy);
+        }
+        updateLayersList();
+        render();
+      });
+
+      // Theme toggle
+      btnThemeToggle.addEventListener('click', () => {
+        state.darkMode = !state.darkMode;
+        if (state.darkMode) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+        render();
+      });
+
+      // Maths Modal Controls
+      function openMathsModal() {
+        mathsModal.classList.remove('opacity-0', 'pointer-events-none');
+        mathsModalContent.classList.remove('scale-95');
+        mathsModalContent.classList.add('scale-100');
+      }
+      function closeMathsModal() {
+        mathsModal.classList.add('opacity-0', 'pointer-events-none');
+        mathsModalContent.classList.remove('scale-100');
+        mathsModalContent.classList.add('scale-95');
+      }
+
+      btnMathsModal.addEventListener('click', openMathsModal);
+      btnCloseMaths.addEventListener('click', closeMathsModal);
+      btnCloseMaths2.addEventListener('click', closeMathsModal);
+      mathsModal.addEventListener('click', (e) => {
+        if (e.target === mathsModal) closeMathsModal();
+      });
+
+      // High Resolution Image Export
+      btnExport.addEventListener('click', () => {
+        const exportCanvas = document.createElement('canvas');
+        const exportSize = 1400;
+        exportCanvas.width = exportSize;
+        exportCanvas.height = exportSize;
+        const eCtx = exportCanvas.getContext('2d');
+
+        eCtx.fillStyle = state.darkMode ? '#030712' : '#ffffff';
+        eCtx.fillRect(0, 0, exportSize, exportSize);
+
+        const cx = exportSize / 2;
+        const cy = exportSize / 2;
+
+        state.layers.forEach(layer => {
+          drawCurvePath(eCtx, layer, cx, cy, layer.maxT);
+        });
+
+        if (state.layers.length === 0) {
+          const { maxAngle } = calculateSymmetry(state.R, state.r);
+          drawCurvePath(eCtx, state, cx, cy, maxAngle);
+        }
+
+        const link = document.createElement('a');
+        link.download = `spirograph-art-${Date.now()}.png`;
+        link.href = exportCanvas.toDataURL('image/png');
+        link.click();
+      });
+
+      // Init
+      document.documentElement.classList.add('dark');
+      setupCanvas();
+      syncInputs();
+    });
+  </script>
+</body>
+</html>
