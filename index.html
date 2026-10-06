@@ -26,11 +26,42 @@
   </script>
 
   <style>
+    /* Global CSS Custom Properties for Seamless Theme Switching */
+    :root {
+      --bg-primary: #030712;
+      --bg-secondary: #111827;
+      --bg-panel: rgba(17, 24, 39, 0.75);
+      --bg-card: #1f2937;
+      --bg-input: #0b0f19;
+      --border-color: #374151;
+      --border-subtle: #1f2937;
+      --text-main: #f9fafb;
+      --text-muted: #9ca3af;
+      --text-subtle: #6b7280;
+    }
+
+    body.theme-light {
+      --bg-primary: #f3f4f6;
+      --bg-secondary: #ffffff;
+      --bg-panel: rgba(255, 255, 255, 0.85);
+      --bg-card: #f9fafb;
+      --bg-input: #f3f4f6;
+      --border-color: #e5e7eb;
+      --border-subtle: #f3f4f6;
+      --text-main: #111827;
+      --text-muted: #4b5563;
+      --text-subtle: #9ca3af;
+    }
+
     html, body {
       height: 100%;
       overflow: hidden;
       user-select: none;
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      transition: background-color 0.3s ease, color 0.3s ease;
     }
+
     ::-webkit-scrollbar {
       width: 5px;
       height: 5px;
@@ -45,45 +76,74 @@
     ::-webkit-scrollbar-thumb:hover {
       background: rgba(156, 163, 175, 0.6);
     }
+
+    /* Dynamic Dynamic Styled Theme Classes */
+    .theme-header {
+      background-color: var(--bg-secondary);
+      border-color: var(--border-color);
+      color: var(--text-main);
+    }
+    .theme-sidebar {
+      background-color: var(--bg-panel);
+      border-color: var(--border-color);
+    }
+    .theme-card {
+      background-color: var(--bg-card);
+      border-color: var(--border-color);
+      color: var(--text-main);
+    }
+    .theme-input {
+      background-color: var(--bg-input);
+      border-color: var(--border-color);
+      color: var(--text-main);
+    }
+    .theme-text-muted {
+      color: var(--text-muted);
+    }
+    .theme-border {
+      border-color: var(--border-color);
+    }
+
     .glass-panel {
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
     }
+
     canvas {
       touch-action: none;
     }
   </style>
 </head>
-<body class="bg-gray-950 text-gray-100 h-full flex flex-col font-sans antialiased transition-colors duration-300">
+<body class="theme-dark h-full flex flex-col font-sans antialiased transition-colors duration-300">
 
-  <header class="h-12 min-h-[48px] px-4 border-b border-gray-800 bg-gray-900/90 dark:bg-gray-900/90 bg-white/90 text-gray-900 dark:text-white flex items-center justify-between shrink-0 glass-panel z-20">
+  <header class="theme-header h-12 min-h-[48px] px-4 border-b flex items-center justify-between shrink-0 glass-panel z-20 transition-colors duration-300">
     <div class="flex items-center space-x-2.5">
       <div class="w-7 h-7 rounded-lg bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center shadow-md shadow-cyan-500/20">
         <i class="fa-solid fa-snowflake text-white text-sm"></i>
       </div>
       <div>
         <h1 class="font-bold text-sm tracking-tight leading-none">Spirograph Studio</h1>
-        <p class="text-[10px] text-gray-500 dark:text-gray-400 leading-tight">Parametric Visualiser & NZ Maths Explorer</p>
+        <p class="text-[10px] theme-text-muted leading-tight">Parametric Visualiser & NZ Maths Explorer</p>
       </div>
     </div>
 
     <!-- Header Quick Actions -->
     <div class="flex items-center space-x-2">
-      <div class="hidden lg:flex items-center space-x-3 px-3 py-1 rounded-lg bg-gray-800/60 border border-gray-700/50 text-xs">
-        <span class="text-gray-400">Petals: <strong id="calc-petals" class="text-cyan-400 font-mono">9</strong></span>
-        <span class="text-gray-600">|</span>
-        <span class="text-gray-400">Full Turns: <strong id="calc-rotations" class="text-indigo-400 font-mono">4</strong></span>
+      <div class="hidden lg:flex items-center space-x-3 px-3 py-1 rounded-lg theme-card border text-xs">
+        <span class="theme-text-muted">Petals: <strong id="calc-petals" class="text-cyan-500 font-mono">9</strong></span>
+        <span class="theme-text-muted">|</span>
+        <span class="theme-text-muted">Full Turns: <strong id="calc-rotations" class="text-indigo-500 font-mono">4</strong></span>
       </div>
 
-      <button id="btn-maths-modal" class="px-2.5 py-1 text-xs font-medium rounded-lg bg-cyan-500/10 text-cyan-400 hover:bg-cyan-500/20 border border-cyan-500/20 transition flex items-center space-x-1">
+      <button id="btn-maths-modal" class="px-2.5 py-1 text-xs font-medium rounded-lg bg-cyan-500/10 text-cyan-500 hover:bg-cyan-500/20 border border-cyan-500/30 transition flex items-center space-x-1">
         <i class="fa-solid fa-graduation-cap"></i>
         <span>Learn Maths</span>
       </button>
 
-      <!-- Theme Switcher -->
-      <button id="btn-theme-toggle" class="p-1.5 rounded-lg bg-gray-800 text-gray-300 hover:bg-gray-700 transition" title="Toggle Theme (UI)">
-        <i class="fa-solid fa-sun text-amber-500 dark:hidden text-xs"></i>
-        <i class="fa-solid fa-moon text-indigo-400 hidden dark:block text-xs"></i>
+      <!-- Global Theme Switcher (Sun / Moon) -->
+      <button id="btn-theme-toggle" class="p-1.5 rounded-lg theme-card hover:opacity-80 transition flex items-center justify-center" title="Toggle Light/Dark Theme (Global UI)">
+        <i class="fa-solid fa-sun text-amber-500 hidden text-xs" id="theme-icon-sun"></i>
+        <i class="fa-solid fa-moon text-indigo-400 text-xs" id="theme-icon-moon"></i>
       </button>
 
       <!-- Export Button -->
@@ -97,19 +157,19 @@
   <main class="flex-1 flex flex-col md:flex-row overflow-hidden relative">
 
     <!-- LEFT PANEL: Controls -->
-    <aside class="w-full md:w-80 lg:w-96 border-r border-gray-800 bg-gray-900/60 flex flex-col h-1/2 md:h-full shrink-0 z-10">
+    <aside class="w-full md:w-80 lg:w-96 border-r theme-sidebar flex flex-col h-1/2 md:h-full shrink-0 z-10 transition-colors duration-300">
 
       <!-- Navigation Tabs -->
-      <div class="flex border-b border-gray-800 bg-gray-900/80 text-xs font-medium">
-        <button id="tab-gear-btn" class="flex-1 py-2.5 border-b-2 border-cyan-500 text-cyan-400 font-semibold flex items-center justify-center space-x-1.5 transition">
+      <div class="flex border-b theme-border text-xs font-medium theme-header">
+        <button id="tab-gear-btn" class="flex-1 py-2.5 border-b-2 border-cyan-500 text-cyan-500 font-semibold flex items-center justify-center space-x-1.5 transition">
           <i class="fa-solid fa-gear"></i>
           <span>Gears</span>
         </button>
-        <button id="tab-style-btn" class="flex-1 py-2.5 border-b-2 border-transparent text-gray-400 hover:text-gray-200 flex items-center justify-center space-x-1.5 transition">
+        <button id="tab-style-btn" class="flex-1 py-2.5 border-b-2 border-transparent theme-text-muted hover:text-cyan-500 flex items-center justify-center space-x-1.5 transition">
           <i class="fa-solid fa-palette"></i>
           <span>Style & Canvas</span>
         </button>
-        <button id="tab-layers-btn" class="flex-1 py-2.5 border-b-2 border-transparent text-gray-400 hover:text-gray-200 flex items-center justify-center space-x-1.5 transition relative">
+        <button id="tab-layers-btn" class="flex-1 py-2.5 border-b-2 border-transparent theme-text-muted hover:text-cyan-500 flex items-center justify-center space-x-1.5 transition relative">
           <i class="fa-solid fa-layer-group"></i>
           <span>Layers</span>
           <span id="badge-layer-count" class="ml-1 text-[10px] px-1.5 py-0.2 rounded-full bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">0</span>
@@ -123,12 +183,12 @@
         <div id="tab-gear" class="space-y-3.5">
           <!-- Wheel Placement Switcher -->
           <div>
-            <label class="block text-xs font-medium text-gray-400 mb-1">Wheel Placement (Mechanism)</label>
-            <div class="grid grid-cols-2 gap-1.5 p-1 bg-gray-950 rounded-xl border border-gray-800">
-              <button id="type-inside" class="py-1.5 text-xs font-semibold rounded-lg transition shadow-sm bg-gray-800 text-cyan-400">
+            <label class="block text-xs font-medium theme-text-muted mb-1">Wheel Placement (Mechanism)</label>
+            <div class="grid grid-cols-2 gap-1.5 p-1 theme-input rounded-xl border">
+              <button id="type-inside" class="py-1.5 text-xs font-semibold rounded-lg transition shadow-sm bg-cyan-500 text-white">
                 Inside (Hypotrochoid)
               </button>
-              <button id="type-outside" class="py-1.5 text-xs font-semibold rounded-lg transition text-gray-400 hover:text-white">
+              <button id="type-outside" class="py-1.5 text-xs font-semibold rounded-lg transition theme-text-muted hover:text-cyan-500">
                 Outside (Epitrochoid)
               </button>
             </div>
@@ -137,37 +197,37 @@
           <!-- Outer Ring Radius (R) -->
           <div>
             <div class="flex justify-between items-center mb-1">
-              <label for="input-R" class="text-xs font-medium text-gray-300">Outer Ring Radius (<span class="font-mono text-cyan-400">R</span>)</label>
-              <input type="number" id="num-R" min="10" max="400" value="180" class="w-14 px-1.5 py-0.5 text-xs text-right rounded border border-gray-700 bg-gray-950 text-white font-mono">
+              <label for="input-R" class="text-xs font-medium">Outer Ring Radius (<span class="font-mono text-cyan-500">R</span>)</label>
+              <input type="number" id="num-R" min="10" max="400" value="180" class="w-14 px-1.5 py-0.5 text-xs text-right rounded border theme-input font-mono">
             </div>
-            <input type="range" id="input-R" min="10" max="400" value="180" class="w-full accent-cyan-500 h-1.5 bg-gray-800 rounded-lg appearance-none cursor-pointer">
+            <input type="range" id="input-R" min="10" max="400" value="180" class="w-full accent-cyan-500 h-1.5 rounded-lg appearance-none cursor-pointer bg-gray-300 dark:bg-gray-700">
           </div>
 
           <!-- Rolling Wheel Radius (r) -->
           <div>
             <div class="flex justify-between items-center mb-1">
-              <label for="input-r" class="text-xs font-medium text-gray-300">Rolling Wheel Radius (<span class="font-mono text-indigo-400">r</span>)</label>
-              <input type="number" id="num-r" min="5" max="300" value="80" class="w-14 px-1.5 py-0.5 text-xs text-right rounded border border-gray-700 bg-gray-950 text-white font-mono">
+              <label for="input-r" class="text-xs font-medium">Rolling Wheel Radius (<span class="font-mono text-indigo-500">r</span>)</label>
+              <input type="number" id="num-r" min="5" max="300" value="80" class="w-14 px-1.5 py-0.5 text-xs text-right rounded border theme-input font-mono">
             </div>
-            <input type="range" id="input-r" min="5" max="300" value="80" class="w-full accent-indigo-500 h-1.5 bg-gray-800 rounded-lg appearance-none cursor-pointer">
+            <input type="range" id="input-r" min="5" max="300" value="80" class="w-full accent-indigo-500 h-1.5 rounded-lg appearance-none cursor-pointer bg-gray-300 dark:bg-gray-700">
           </div>
 
           <!-- Pen Hole Distance (d) -->
           <div>
             <div class="flex justify-between items-center mb-1">
               <div class="flex items-center space-x-1">
-                <label for="input-d" class="text-xs font-medium text-gray-300">Pen Hole Distance (<span class="font-mono text-rose-400">d</span>)</label>
-                <span id="extended-indicator" class="hidden text-[9px] px-1 py-0.1 rounded bg-rose-500/20 text-rose-300 font-semibold border border-rose-500/30">d &gt; r (Extended)</span>
+                <label for="input-d" class="text-xs font-medium">Pen Hole Distance (<span class="font-mono text-rose-500">d</span>)</label>
+                <span id="extended-indicator" class="hidden text-[9px] px-1 py-0.1 rounded bg-rose-500/20 text-rose-500 font-semibold border border-rose-500/30">d &gt; r (Extended)</span>
               </div>
-              <input type="number" id="num-d" min="0" max="400" value="100" class="w-14 px-1.5 py-0.5 text-xs text-right rounded border border-gray-700 bg-gray-950 text-white font-mono">
+              <input type="number" id="num-d" min="0" max="400" value="100" class="w-14 px-1.5 py-0.5 text-xs text-right rounded border theme-input font-mono">
             </div>
-            <input type="range" id="input-d" min="0" max="400" value="100" class="w-full accent-rose-500 h-1.5 bg-gray-800 rounded-lg appearance-none cursor-pointer">
+            <input type="range" id="input-d" min="0" max="400" value="100" class="w-full accent-rose-500 h-1.5 rounded-lg appearance-none cursor-pointer bg-gray-300 dark:bg-gray-700">
           </div>
 
           <!-- Presets Dropdown Selector -->
-          <div class="pt-2 border-t border-gray-800">
-            <label class="block text-xs font-medium text-gray-400 mb-1">Geometry Presets</label>
-            <select id="preset-selector" class="w-full px-2.5 py-1.5 text-xs rounded-xl border border-gray-700 bg-gray-950 text-gray-200 focus:outline-none focus:border-cyan-500">
+          <div class="pt-2 border-t theme-border">
+            <label class="block text-xs font-medium theme-text-muted mb-1">Geometry Presets</label>
+            <select id="preset-selector" class="w-full px-2.5 py-1.5 text-xs rounded-xl border theme-input focus:outline-none focus:border-cyan-500">
               <option value="">-- Choose Geometry --</option>
               <option value="star">5-Petal Star (Hypo)</option>
               <option value="extended-wild">Wild Orbit (Extended Pen d > r)</option>
@@ -181,15 +241,18 @@
 
         <!-- TAB 2: Style & Canvas Controls -->
         <div id="tab-style" class="space-y-3.5 hidden">
-          <!-- Canvas Background Toggle (Black / White) -->
+          <!-- Canvas Background Controls (Independent from Global Theme) -->
           <div>
-            <label class="block text-xs font-medium text-gray-400 mb-1">Canvas Background Colour</label>
-            <div class="grid grid-cols-2 gap-1.5 p-1 bg-gray-950 rounded-xl border border-gray-800">
-              <button id="bg-black-btn" class="py-1.5 text-xs font-semibold rounded-lg border border-cyan-500 bg-gray-800 text-cyan-400 flex items-center justify-center space-x-1.5">
+            <div class="flex justify-between items-center mb-1">
+              <label class="block text-xs font-medium theme-text-muted">Canvas Background Colour</label>
+              <span class="text-[10px] theme-text-muted italic">Controlled separately</span>
+            </div>
+            <div class="grid grid-cols-2 gap-1.5 p-1 theme-input rounded-xl border">
+              <button id="bg-black-btn" class="py-1.5 text-xs font-semibold rounded-lg border border-cyan-500 bg-gray-900 text-cyan-400 flex items-center justify-center space-x-1.5 shadow-sm">
                 <span class="w-2.5 h-2.5 rounded-full bg-black border border-gray-600"></span>
                 <span>Black Canvas</span>
               </button>
-              <button id="bg-white-btn" class="py-1.5 text-xs font-semibold rounded-lg border border-transparent text-gray-400 hover:text-white flex items-center justify-center space-x-1.5">
+              <button id="bg-white-btn" class="py-1.5 text-xs font-semibold rounded-lg border border-transparent theme-text-muted hover:text-cyan-500 flex items-center justify-center space-x-1.5">
                 <span class="w-2.5 h-2.5 rounded-full bg-white border border-gray-300"></span>
                 <span>White Canvas</span>
               </button>
@@ -198,24 +261,24 @@
 
           <!-- Stroke Colour Mode Selection -->
           <div>
-            <label class="block text-xs font-medium text-gray-400 mb-1">Stroke Colour Mode</label>
+            <label class="block text-xs font-medium theme-text-muted mb-1">Stroke Colour Mode</label>
             <div class="grid grid-cols-3 gap-1.5">
-              <button id="color-mode-solid" class="py-1 px-2 text-xs font-medium rounded-lg border border-cyan-500 bg-cyan-500/10 text-cyan-400">Solid</button>
-              <button id="color-mode-rainbow" class="py-1 px-2 text-xs font-medium rounded-lg border border-gray-700 text-gray-300 hover:border-gray-500">Spectral</button>
-              <button id="color-mode-gradient" class="py-1 px-2 text-xs font-medium rounded-lg border border-gray-700 text-gray-300 hover:border-gray-500">Gradient</button>
+              <button id="color-mode-solid" class="py-1 px-2 text-xs font-medium rounded-lg border border-cyan-500 bg-cyan-500/10 text-cyan-500">Solid</button>
+              <button id="color-mode-rainbow" class="py-1 px-2 text-xs font-medium rounded-lg border theme-border theme-text-muted hover:border-cyan-500">Spectral</button>
+              <button id="color-mode-gradient" class="py-1 px-2 text-xs font-medium rounded-lg border theme-border theme-text-muted hover:border-cyan-500">Gradient</button>
             </div>
           </div>
 
           <!-- Solid Colour Selector -->
           <div id="solid-color-container" class="flex items-center justify-between">
-            <label class="text-xs font-medium text-gray-300">Curve Stroke Colour</label>
+            <label class="text-xs font-medium">Curve Stroke Colour</label>
             <input type="color" id="input-color-1" value="#06b6d4" class="w-7 h-7 rounded cursor-pointer bg-transparent border-0">
           </div>
 
           <!-- Gradient Colours Selector -->
           <div id="gradient-color-container" class="hidden flex-col space-y-2">
             <div class="flex items-center justify-between">
-              <label class="text-xs font-medium text-gray-300">Gradient Start & End</label>
+              <label class="text-xs font-medium">Gradient Start & End</label>
               <div class="flex items-center space-x-2">
                 <input type="color" id="input-grad-1" value="#06b6d4" class="w-7 h-7 rounded cursor-pointer bg-transparent border-0">
                 <input type="color" id="input-grad-2" value="#ec4899" class="w-7 h-7 rounded cursor-pointer bg-transparent border-0">
@@ -227,53 +290,53 @@
           <div class="grid grid-cols-2 gap-3">
             <div>
               <div class="flex justify-between items-center mb-1">
-                <label class="text-xs font-medium text-gray-300">Thickness</label>
-                <span id="val-linewidth" class="text-[11px] font-mono text-gray-400">1.8px</span>
+                <label class="text-xs font-medium">Thickness</label>
+                <span id="val-linewidth" class="text-[11px] font-mono theme-text-muted">1.8px</span>
               </div>
-              <input type="range" id="input-linewidth" min="0.5" max="8" step="0.1" value="1.8" class="w-full accent-cyan-500 h-1.5 bg-gray-800 rounded-lg appearance-none cursor-pointer">
+              <input type="range" id="input-linewidth" min="0.5" max="8" step="0.1" value="1.8" class="w-full accent-cyan-500 h-1.5 rounded-lg appearance-none cursor-pointer bg-gray-300 dark:bg-gray-700">
             </div>
             <div>
               <div class="flex justify-between items-center mb-1">
-                <label class="text-xs font-medium text-gray-300">Opacity</label>
-                <span id="val-opacity" class="text-[11px] font-mono text-gray-400">90%</span>
+                <label class="text-xs font-medium">Opacity</label>
+                <span id="val-opacity" class="text-[11px] font-mono theme-text-muted">90%</span>
               </div>
-              <input type="range" id="input-opacity" min="0.1" max="1" step="0.05" value="0.9" class="w-full accent-cyan-500 h-1.5 bg-gray-800 rounded-lg appearance-none cursor-pointer">
+              <input type="range" id="input-opacity" min="0.1" max="1" step="0.05" value="0.9" class="w-full accent-cyan-500 h-1.5 rounded-lg appearance-none cursor-pointer bg-gray-300 dark:bg-gray-700">
             </div>
           </div>
 
           <!-- Resolution -->
           <div>
             <div class="flex justify-between items-center mb-1">
-              <label class="text-xs font-medium text-gray-300">Resolution / Smoothness</label>
-              <span id="val-resolution" class="text-[11px] font-mono text-gray-400">High</span>
+              <label class="text-xs font-medium">Resolution / Smoothness</label>
+              <span id="val-resolution" class="text-[11px] font-mono theme-text-muted">High</span>
             </div>
-            <input type="range" id="input-resolution" min="1" max="5" step="1" value="4" class="w-full accent-cyan-500 h-1.5 bg-gray-800 rounded-lg appearance-none cursor-pointer">
+            <input type="range" id="input-resolution" min="1" max="5" step="1" value="4" class="w-full accent-cyan-500 h-1.5 rounded-lg appearance-none cursor-pointer bg-gray-300 dark:bg-gray-700">
           </div>
 
           <!-- Show Rolling Gear Guides -->
           <div class="flex items-center justify-between pt-1">
             <div>
-              <span class="text-xs font-semibold text-gray-200 block">Show Rolling Wheel & Arm Guides</span>
-              <span class="text-[10px] text-gray-400">Displays outer ring, inner wheel & pen arm</span>
+              <span class="text-xs font-semibold block">Show Rolling Wheel & Arm Guides</span>
+              <span class="text-[10px] theme-text-muted">Displays outer ring, inner wheel & pen arm</span>
             </div>
             <label class="relative inline-flex items-center cursor-pointer">
               <input type="checkbox" id="chk-guides" class="sr-only peer" checked>
-              <div class="w-8 h-4 bg-gray-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-cyan-500"></div>
+              <div class="w-8 h-4 bg-gray-300 dark:bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-cyan-500"></div>
             </label>
           </div>
         </div>
 
         <!-- TAB 3: Layer Stack -->
         <div id="tab-layers" class="space-y-3 hidden">
-          <div class="flex items-center justify-between pb-2 border-b border-gray-800">
-            <span class="text-xs font-medium text-gray-400">Composed Layers</span>
-            <button id="btn-clear-layers" class="text-[11px] text-gray-400 hover:text-rose-400 transition">
+          <div class="flex items-center justify-between pb-2 border-b theme-border">
+            <span class="text-xs font-medium theme-text-muted">Composed Layers</span>
+            <button id="btn-clear-layers" class="text-[11px] theme-text-muted hover:text-rose-500 transition">
               Clear All Layers
             </button>
           </div>
 
           <div id="layers-list" class="space-y-2 max-h-52 overflow-y-auto pr-1">
-            <div id="empty-layers-msg" class="text-center py-6 text-xs text-gray-500 italic">
+            <div id="empty-layers-msg" class="text-center py-6 text-xs theme-text-muted italic">
               No saved layers. Click 'Add Layer' below to store overlapping curves.
             </div>
           </div>
@@ -281,26 +344,26 @@
 
       </div>
 
-      <div class="p-3 border-t border-gray-800 bg-gray-900/90 space-y-2 shrink-0">
+      <div class="p-3 border-t theme-border theme-header space-y-2 shrink-0">
 
         <!-- Animation Speed Control & Progress -->
-        <div class="space-y-1 p-2 rounded-xl bg-gray-950/80 border border-gray-800">
+        <div class="space-y-1 p-2 rounded-xl theme-card border">
           <div class="flex justify-between items-center text-[11px]">
-            <span class="text-gray-400 flex items-center space-x-1">
-              <i class="fa-solid fa-gauge-high text-cyan-400"></i>
+            <span class="theme-text-muted flex items-center space-x-1">
+              <i class="fa-solid fa-gauge-high text-cyan-500"></i>
               <span>Tracing Speed</span>
             </span>
-            <span id="val-speed" class="font-mono text-cyan-400 font-semibold">Medium</span>
+            <span id="val-speed" class="font-mono text-cyan-500 font-semibold">Medium</span>
           </div>
-          <input type="range" id="input-speed" min="1" max="100" value="45" class="w-full accent-cyan-500 h-1.5 bg-gray-800 rounded-lg appearance-none cursor-pointer">
+          <input type="range" id="input-speed" min="1" max="100" value="45" class="w-full accent-cyan-500 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer">
 
           <!-- Loop Progress Bar -->
           <div class="space-y-0.5 pt-0.5">
-            <div class="flex justify-between text-[10px] text-gray-400">
+            <div class="flex justify-between text-[10px] theme-text-muted">
               <span>Loop Progress</span>
-              <span id="progress-text" class="font-mono text-indigo-400">0%</span>
+              <span id="progress-text" class="font-mono text-indigo-500">0%</span>
             </div>
-            <div class="w-full h-1.5 bg-gray-800 rounded-full overflow-hidden">
+            <div class="w-full h-1.5 bg-gray-200 dark:bg-gray-800 rounded-full overflow-hidden">
               <div id="progress-bar" class="h-full bg-gradient-to-r from-cyan-500 to-indigo-500 w-0 transition-all duration-75"></div>
             </div>
           </div>
@@ -313,8 +376,8 @@
             <span id="btn-animate-text">Animate</span>
           </button>
 
-          <button id="btn-instant" class="py-2 px-2 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-200 font-semibold text-xs border border-gray-700 transition flex items-center justify-center space-x-1">
-            <i class="fa-solid fa-bolt text-amber-400"></i>
+          <button id="btn-instant" class="py-2 px-2 rounded-xl theme-card hover:opacity-80 font-semibold text-xs border transition flex items-center justify-center space-x-1">
+            <i class="fa-solid fa-bolt text-amber-500"></i>
             <span>Instant</span>
           </button>
 
@@ -325,15 +388,15 @@
         </div>
 
         <div class="flex items-center space-x-1.5">
-          <button id="btn-undo" class="flex-1 py-1.5 text-[11px] font-medium rounded-lg border border-gray-800 text-gray-300 hover:bg-gray-800 transition flex items-center justify-center space-x-1">
+          <button id="btn-undo" class="flex-1 py-1.5 text-[11px] font-medium rounded-lg border theme-border theme-card hover:opacity-80 transition flex items-center justify-center space-x-1">
             <i class="fa-solid fa-rotate-left"></i>
             <span>Undo</span>
           </button>
-          <button id="btn-auto-pattern" class="flex-1 py-1.5 text-[11px] font-medium rounded-lg border border-gray-800 text-gray-300 hover:bg-gray-800 transition flex items-center justify-center space-x-1">
-            <i class="fa-solid fa-arrows-spin text-cyan-400"></i>
+          <button id="btn-auto-pattern" class="flex-1 py-1.5 text-[11px] font-medium rounded-lg border theme-border theme-card hover:opacity-80 transition flex items-center justify-center space-x-1">
+            <i class="fa-solid fa-arrows-spin text-cyan-500"></i>
             <span>Rosette</span>
           </button>
-          <button id="btn-clear" class="flex-1 py-1.5 text-[11px] font-medium rounded-lg border border-rose-500/30 text-rose-400 hover:bg-rose-500/10 transition flex items-center justify-center space-x-1">
+          <button id="btn-clear" class="flex-1 py-1.5 text-[11px] font-medium rounded-lg border border-rose-500/30 text-rose-500 hover:bg-rose-500/10 transition flex items-center justify-center space-x-1">
             <i class="fa-solid fa-trash-can"></i>
             <span>Clear</span>
           </button>
@@ -343,21 +406,21 @@
     </aside>
 
     <!-- RIGHT PANEL: Canvas Viewport -->
-    <section class="flex-1 bg-gray-950 flex flex-col items-center justify-center p-3 relative h-1/2 md:h-full overflow-hidden">
+    <section class="flex-1 flex flex-col items-center justify-center p-3 relative h-1/2 md:h-full overflow-hidden transition-colors duration-300">
 
-      <div id="canvas-container" class="relative w-full h-full max-w-[85vh] max-h-[85vh] aspect-square rounded-2xl overflow-hidden bg-gray-900 border border-gray-800 flex items-center justify-center shadow-2xl">
+      <div id="canvas-container" class="relative w-full h-full max-w-[85vh] max-h-[85vh] aspect-square rounded-2xl overflow-hidden border theme-border flex items-center justify-center shadow-2xl transition-all duration-300">
         <canvas id="spiroCanvas" class="w-full h-full block cursor-crosshair"></canvas>
 
         <!-- Live Coordinates Tracker -->
-        <div class="absolute bottom-2.5 left-2.5 bg-gray-950/80 text-gray-300 font-mono text-[10px] px-2 py-0.5 rounded-lg glass-panel border border-gray-800 pointer-events-none flex items-center space-x-2">
-          <span>X: <span id="coord-x" class="text-cyan-400">0.0</span></span>
-          <span>Y: <span id="coord-y" class="text-cyan-400">0.0</span></span>
-          <span>t: <span id="coord-t" class="text-amber-400">0.0 rad</span></span>
+        <div class="absolute bottom-2.5 left-2.5 theme-card font-mono text-[10px] px-2.5 py-1 rounded-lg glass-panel border theme-border pointer-events-none flex items-center space-x-2.5 shadow-md">
+          <span>X: <span id="coord-x" class="text-cyan-500 font-bold">0.0</span></span>
+          <span>Y: <span id="coord-y" class="text-cyan-500 font-bold">0.0</span></span>
+          <span>t: <span id="coord-t" class="text-amber-500 font-bold">0.0 rad</span></span>
         </div>
 
         <!-- Tracing Badge -->
-        <div id="tracing-indicator" class="hidden absolute top-2.5 right-2.5 bg-cyan-500/20 text-cyan-400 border border-cyan-500/40 font-semibold text-[11px] px-2.5 py-0.5 rounded-full glass-panel flex items-center space-x-1.5">
-          <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping"></span>
+        <div id="tracing-indicator" class="hidden absolute top-2.5 right-2.5 bg-cyan-500/20 text-cyan-500 border border-cyan-500/40 font-semibold text-[11px] px-2.5 py-0.5 rounded-full glass-panel flex items-center space-x-1.5 shadow-md">
+          <span class="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-ping"></span>
           <span id="tracing-status-text">Tracing Curve...</span>
         </div>
       </div>
@@ -366,31 +429,31 @@
 
   </main>
 
-  <div id="export-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-950/80 glass-panel opacity-0 pointer-events-none transition-opacity duration-300">
-    <div class="bg-gray-900 rounded-3xl max-w-md w-full p-5 shadow-2xl border border-gray-800 space-y-4">
-      <div class="flex justify-between items-center pb-2 border-b border-gray-800">
+  <div id="export-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 glass-panel opacity-0 pointer-events-none transition-opacity duration-300">
+    <div class="theme-card rounded-3xl max-w-md w-full p-5 shadow-2xl border space-y-4">
+      <div class="flex justify-between items-center pb-2 border-b theme-border">
         <div class="flex items-center space-x-2">
-          <i class="fa-solid fa-download text-emerald-400"></i>
-          <h3 class="font-bold text-white text-sm">Export Created Image</h3>
+          <i class="fa-solid fa-download text-emerald-500"></i>
+          <h3 class="font-bold text-sm">Export Created Image</h3>
         </div>
-        <button id="btn-close-export" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+        <button id="btn-close-export" class="theme-text-muted hover:text-rose-500"><i class="fa-solid fa-xmark"></i></button>
       </div>
 
-      <div class="space-y-3 text-xs text-gray-300">
+      <div class="space-y-3 text-xs">
         <div>
-          <label class="block mb-1 text-gray-400">File Format</label>
+          <label class="block mb-1 theme-text-muted">File Format</label>
           <div class="grid grid-cols-2 gap-2">
-            <button id="export-fmt-png" class="py-2 rounded-xl border border-emerald-500 bg-emerald-500/10 text-emerald-400 font-semibold">PNG Image</button>
-            <button id="export-fmt-jpg" class="py-2 rounded-xl border border-gray-700 text-gray-300 hover:border-gray-500">JPG Image</button>
+            <button id="export-fmt-png" class="py-2 rounded-xl border border-emerald-500 bg-emerald-500/10 text-emerald-500 font-semibold">PNG Image</button>
+            <button id="export-fmt-jpg" class="py-2 rounded-xl border theme-border theme-text-muted hover:border-emerald-500">JPG Image</button>
           </div>
         </div>
 
         <div>
-          <label class="block mb-1 text-gray-400">Background Inclusion</label>
+          <label class="block mb-1 theme-text-muted">Background Inclusion</label>
           <div class="space-y-1.5">
             <label class="flex items-center space-x-2 cursor-pointer">
               <input type="radio" name="export-bg" value="current" checked class="accent-emerald-500">
-              <span>Include current canvas background colour (<span id="export-bg-name">Black</span>)</span>
+              <span>Include current canvas background colour (<span id="export-bg-name" class="font-semibold">Black</span>)</span>
             </label>
             <label class="flex items-center space-x-2 cursor-pointer">
               <input type="radio" name="export-bg" value="transparent" class="accent-emerald-500">
@@ -400,8 +463,8 @@
         </div>
 
         <div>
-          <label class="block mb-1 text-gray-400">Export Resolution</label>
-          <select id="export-res" class="w-full px-2.5 py-1.5 text-xs rounded-xl border border-gray-700 bg-gray-950 text-gray-200">
+          <label class="block mb-1 theme-text-muted">Export Resolution</label>
+          <select id="export-res" class="w-full px-2.5 py-1.5 text-xs rounded-xl border theme-input">
             <option value="1000">Standard (1000 x 1000 px)</option>
             <option value="2000" selected>High-Res Crisp (2000 x 2000 px)</option>
             <option value="3000">Ultra Print (3000 x 3000 px)</option>
@@ -410,8 +473,8 @@
       </div>
 
       <div class="pt-2 flex justify-end space-x-2">
-        <button id="btn-cancel-export" class="px-3 py-1.5 rounded-xl border border-gray-700 text-gray-300">Cancel</button>
-        <button id="btn-download-now" class="px-4 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold flex items-center space-x-1.5">
+        <button id="btn-cancel-export" class="px-3 py-1.5 rounded-xl border theme-border theme-text-muted">Cancel</button>
+        <button id="btn-download-now" class="px-4 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold flex items-center space-x-1.5 shadow-md shadow-emerald-600/20">
           <i class="fa-solid fa-file-export"></i>
           <span>Download Image</span>
         </button>
@@ -419,98 +482,98 @@
     </div>
   </div>
 
-  <div id="maths-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-950/80 glass-panel opacity-0 pointer-events-none transition-opacity duration-300">
-    <div class="bg-gray-900 rounded-3xl max-w-2xl w-full max-h-[85vh] flex flex-col shadow-2xl border border-gray-800 overflow-hidden transform scale-95 transition-transform duration-300" id="maths-modal-content">
+  <div id="maths-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 glass-panel opacity-0 pointer-events-none transition-opacity duration-300">
+    <div class="theme-card rounded-3xl max-w-2xl w-full max-h-[85vh] flex flex-col shadow-2xl border overflow-hidden transform scale-95 transition-transform duration-300" id="maths-modal-content">
 
       <!-- Modal Header -->
-      <div class="px-5 py-3.5 border-b border-gray-800 flex items-center justify-between bg-gray-900/80">
+      <div class="px-5 py-3.5 border-b theme-border flex items-center justify-between theme-header">
         <div class="flex items-center space-x-2.5">
-          <div class="w-8 h-8 rounded-xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center font-bold">
+          <div class="w-8 h-8 rounded-xl bg-cyan-500/10 text-cyan-500 flex items-center justify-center font-bold">
             <i class="fa-solid fa-square-root-variable"></i>
           </div>
           <div>
-            <h3 class="font-bold text-white text-sm">The Maths Behind Spirographs</h3>
-            <p class="text-[11px] text-gray-400">Parametric equations, non-slip kinematics & geometry in NZ English</p>
+            <h3 class="font-bold text-sm">The Maths Behind Spirographs</h3>
+            <p class="text-[11px] theme-text-muted">Parametric equations, non-slip kinematics & geometry in NZ English</p>
           </div>
         </div>
-        <button id="btn-close-maths" class="w-7 h-7 rounded-full bg-gray-800 text-gray-400 hover:text-white flex items-center justify-center transition">
+        <button id="btn-close-maths" class="w-7 h-7 rounded-full theme-card theme-text-muted hover:text-rose-500 flex items-center justify-center transition">
           <i class="fa-solid fa-xmark text-sm"></i>
         </button>
       </div>
 
       <!-- Modal Content Body -->
-      <div class="p-5 overflow-y-auto space-y-5 text-xs text-gray-300 leading-relaxed">
+      <div class="p-5 overflow-y-auto space-y-5 text-xs theme-text-muted leading-relaxed">
 
         <!-- Section 1: Non-slip condition -->
         <section class="space-y-2">
-          <h4 class="font-bold text-white text-sm flex items-center space-x-1.5">
-            <i class="fa-solid fa-gear text-cyan-400"></i>
+          <h4 class="font-bold text-sm text-cyan-500 flex items-center space-x-1.5">
+            <i class="fa-solid fa-gear"></i>
             <span>1. The Non-Slip Rolling Condition</span>
           </h4>
           <p>
-            When a smaller wheel of radius <strong class="text-indigo-400 font-mono">r</strong> rolls along a fixed outer ring gear of radius <strong class="text-cyan-400 font-mono">R</strong> without slipping, the length of the arc traversed along the fixed ring must exactly equal the length of the arc rolled along the wheel boundary.
+            When a smaller wheel of radius <strong class="text-indigo-500 font-mono">r</strong> rolls along a fixed outer ring gear of radius <strong class="text-cyan-500 font-mono">R</strong> without slipping, the length of the arc traversed along the fixed ring must exactly equal the length of the arc rolled along the wheel boundary.
           </p>
-          <div class="p-3 rounded-xl bg-cyan-950/30 border border-cyan-800/50 space-y-1.5 font-mono text-[11px]">
-            <p class="text-cyan-300 font-semibold">Arc Length Equivalence Equation:</p>
-            <p class="pl-2 border-l-2 border-cyan-500 text-gray-200">s = R &middot; &theta; = r &middot; &phi;</p>
-            <p class="text-gray-400 text-[10px]">
-              Where <span class="text-amber-400">&theta;</span> is the orbital angle around the main centre, and <span class="text-indigo-400">&phi;</span> is the total rotation angle of the rolling wheel.
+          <div class="p-3 rounded-xl bg-cyan-500/10 border border-cyan-500/20 space-y-1.5 font-mono text-[11px]">
+            <p class="text-cyan-500 font-semibold">Arc Length Equivalence Equation:</p>
+            <p class="pl-2 border-l-2 border-cyan-500">s = R &middot; &theta; = r &middot; &phi;</p>
+            <p class="theme-text-muted text-[10px]">
+              Where <span class="text-amber-500 font-bold">&theta;</span> is the orbital angle around the main centre, and <span class="text-indigo-500 font-bold">&phi;</span> is the total rotation angle of the rolling wheel.
             </p>
           </div>
           <p>
-            Rearranging gives the rotation of the inner wheel relative to its own centre: <span class="font-mono text-indigo-300">&phi; = (R / r) &middot; &theta;</span>.
+            Rearranging gives the rotation of the inner wheel relative to its own centre: <span class="font-mono text-indigo-500 font-semibold">&phi; = (R / r) &middot; &theta;</span>.
           </p>
         </section>
 
         <!-- Section 2: Deriving Wheel Centre & Pen Position -->
         <section class="space-y-2">
-          <h4 class="font-bold text-white text-sm flex items-center space-x-1.5">
-            <i class="fa-solid fa-arrows-to-dot text-indigo-400"></i>
+          <h4 class="font-bold text-sm text-indigo-500 flex items-center space-x-1.5">
+            <i class="fa-solid fa-arrows-to-dot"></i>
             <span>2. Vector Derivation of Pen Coordinates (x, y)</span>
           </h4>
           <p>
-            The pen position is found by vector addition: adding the vector from the origin to the centre of the rolling wheel, plus the vector from the wheel centre to the pen hole at distance <strong class="text-rose-400 font-mono">d</strong>.
+            The pen position is found by vector addition: adding the vector from the origin to the centre of the rolling wheel, plus the vector from the wheel centre to the pen hole at distance <strong class="text-rose-500 font-mono">d</strong>.
           </p>
 
-          <div class="p-3 rounded-xl bg-gray-950 border border-gray-800 space-y-2 font-mono text-[11px]">
+          <div class="p-3 rounded-xl theme-input border theme-border space-y-2 font-mono text-[11px]">
             <div>
-              <span class="text-cyan-400 font-bold block mb-0.5">Hypotrochoid (Wheel Inside Fixed Ring):</span>
-              <p class="text-gray-400 text-[10px]">Wheel Centre: C = ((R - r)cos&theta;, (R - r)sin&theta;)</p>
-              <p class="pl-2 border-l-2 border-cyan-500 text-gray-200">x(&theta;) = (R - r) &middot; cos(&theta;) + d &middot; cos(((R - r) / r) &middot; &theta;)</p>
-              <p class="pl-2 border-l-2 border-cyan-500 text-gray-200">y(&theta;) = (R - r) &middot; sin(&theta;) - d &middot; sin(((R - r) / r) &middot; &theta;)</p>
+              <span class="text-cyan-500 font-bold block mb-0.5">Hypotrochoid (Wheel Inside Fixed Ring):</span>
+              <p class="theme-text-muted text-[10px]">Wheel Centre: C = ((R - r)cos&theta;, (R - r)sin&theta;)</p>
+              <p class="pl-2 border-l-2 border-cyan-500">x(&theta;) = (R - r) &middot; cos(&theta;) + d &middot; cos(((R - r) / r) &middot; &theta;)</p>
+              <p class="pl-2 border-l-2 border-cyan-500">y(&theta;) = (R - r) &middot; sin(&theta;) - d &middot; sin(((R - r) / r) &middot; &theta;)</p>
             </div>
-            <div class="pt-2 border-t border-gray-800">
-              <span class="text-indigo-400 font-bold block mb-0.5">Epitrochoid (Wheel Outside Fixed Ring):</span>
-              <p class="text-gray-400 text-[10px]">Wheel Centre: C = ((R + r)cos&theta;, (R + r)sin&theta;)</p>
-              <p class="pl-2 border-l-2 border-indigo-400 text-gray-200">x(&theta;) = (R + r) &middot; cos(&theta;) - d &middot; cos(((R + r) / r) &middot; &theta;)</p>
-              <p class="pl-2 border-l-2 border-indigo-400 text-gray-200">y(&theta;) = (R + r) &middot; sin(&theta;) - d &middot; sin(((R + r) / r) &middot; &theta;)</p>
+            <div class="pt-2 border-t theme-border">
+              <span class="text-indigo-500 font-bold block mb-0.5">Epitrochoid (Wheel Outside Fixed Ring):</span>
+              <p class="theme-text-muted text-[10px]">Wheel Centre: C = ((R + r)cos&theta;, (R + r)sin&theta;)</p>
+              <p class="pl-2 border-l-2 border-indigo-500">x(&theta;) = (R + r) &middot; cos(&theta;) - d &middot; cos(((R + r) / r) &middot; &theta;)</p>
+              <p class="pl-2 border-l-2 border-indigo-500">y(&theta;) = (R + r) &middot; sin(&theta;) - d &middot; sin(((R + r) / r) &middot; &theta;)</p>
             </div>
           </div>
         </section>
 
         <!-- Section 3: Impossible d > r case -->
         <section class="space-y-2">
-          <h4 class="font-bold text-white text-sm flex items-center space-x-1.5">
-            <i class="fa-solid fa-wand-magic-sparkles text-rose-400"></i>
+          <h4 class="font-bold text-sm text-rose-500 flex items-center space-x-1.5">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
             <span>3. Extended Geometries (Pen Hole Outside Wheel d &gt; r)</span>
           </h4>
           <p>
-            In a physical plastic spirograph kit, the pen hole must lie inside the physical boundaries of the wheel (<span class="font-mono text-cyan-400">d &le; r</span>). In our mathematical studio, setting <span class="font-mono text-rose-400">d &gt; r</span> simulates an extension arm extending outside the physical disc! This yields dramatic self-intersecting loops, starbursts, and wild trochoids impossible with standard toy sets.
+            In a physical plastic spirograph kit, the pen hole must lie inside the physical boundaries of the wheel (<span class="font-mono text-cyan-500">d &le; r</span>). In our mathematical studio, setting <span class="font-mono text-rose-500">d &gt; r</span> simulates an extension arm extending outside the physical disc! This yields dramatic self-intersecting loops, starbursts, and wild trochoids impossible with standard toy sets.
           </p>
         </section>
 
         <!-- Section 4: GCD and Petals -->
         <section class="space-y-2">
-          <h4 class="font-bold text-white text-sm flex items-center space-x-1.5">
-            <i class="fa-solid fa-calculator text-amber-400"></i>
+          <h4 class="font-bold text-sm text-amber-500 flex items-center space-x-1.5">
+            <i class="fa-solid fa-calculator"></i>
             <span>4. Symmetry & Great Common Divisor (GCD)</span>
           </h4>
           <p>
-            The curve seamlessly closes back onto its starting point when the ratio <span class="font-mono text-cyan-400">R / r</span> simplifies to the irreducible fraction <span class="font-mono text-amber-400">a / b</span>:
+            The curve seamlessly closes back onto its starting point when the ratio <span class="font-mono text-cyan-500">R / r</span> simplifies to the irreducible fraction <span class="font-mono text-amber-500">a / b</span>:
           </p>
-          <div class="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-[11px] text-amber-200 space-y-1">
-            <p>&bull; <strong>Total Lobes / Petals</strong> = Simplified Numerator <span class="font-mono font-bold text-amber-400">a</span></p>
-            <p>&bull; <strong>Full Rotations Needed to Close Curve</strong> = Simplified Denominator <span class="font-mono font-bold text-amber-400">b</span></p>
+          <div class="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-[11px] space-y-1">
+            <p>&bull; <strong>Total Lobes / Petals</strong> = Simplified Numerator <span class="font-mono font-bold text-amber-500">a</span></p>
+            <p>&bull; <strong>Full Rotations Needed to Close Curve</strong> = Simplified Denominator <span class="font-mono font-bold text-amber-500">b</span></p>
             <p>&bull; Calculated via <span class="font-mono font-bold">GCD(R, r)</span></p>
           </div>
         </section>
@@ -518,7 +581,7 @@
       </div>
 
       <!-- Modal Footer -->
-      <div class="px-5 py-3 border-t border-gray-800 bg-gray-900/80 flex justify-end">
+      <div class="px-5 py-3 border-t theme-border theme-header flex justify-end">
         <button id="btn-close-maths-2" class="px-4 py-1.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-white font-semibold text-xs transition">
           Close Maths Explainer
         </button>
@@ -529,13 +592,13 @@
   <script>
     document.addEventListener('DOMContentLoaded', () => {
 
-      // State Management
+      // Application State
       const state = {
         mechanism: 'inside', // 'inside' or 'outside'
         R: 180,
         r: 80,
         d: 100,
-        bgColour: 'black', // 'black' or 'white'
+        bgColour: 'black', // Canvas bg: 'black' or 'white' (Controlled independently or synced on theme toggle)
         colorMode: 'solid', // 'solid', 'rainbow', 'gradient'
         color1: '#06b6d4',
         grad1: '#06b6d4',
@@ -545,7 +608,7 @@
         speed: 45,
         resolution: 4,
         showGuides: true,
-        darkMode: true,
+        globalTheme: 'dark', // 'dark' (Moon) or 'light' (Sun)
         layers: [],
         
         // Animation State
@@ -556,7 +619,7 @@
         maxT: 0
       };
 
-      // DOM Elements
+      // DOM Handles
       const canvas = document.getElementById('spiroCanvas');
       const ctx = canvas.getContext('2d');
       const canvasContainer = document.getElementById('canvas-container');
@@ -627,6 +690,9 @@
       const tracingStatusText = document.getElementById('tracing-status-text');
 
       const btnThemeToggle = document.getElementById('btn-theme-toggle');
+      const themeIconSun = document.getElementById('theme-icon-sun');
+      const themeIconMoon = document.getElementById('theme-icon-moon');
+
       const btnOpenExport = document.getElementById('btn-open-export');
       const exportModal = document.getElementById('export-modal');
       const btnCloseExport = document.getElementById('btn-close-export');
@@ -791,7 +857,7 @@
         context.save();
         context.translate(cx, cy);
 
-        // HIGH CONTRAST Fixed Outer Ring Guide
+        // HIGH CONTRAST Outer Ring Guide
         context.strokeStyle = isDarkCanvas ? '#06b6d4' : '#0284c7';
         context.lineWidth = isDarkCanvas ? 2.2 : 2.5;
         context.setLineDash([6, 4]);
@@ -945,22 +1011,22 @@
       }
 
       function switchTab(activeTab) {
-        tabGearBtn.className = 'flex-1 py-2.5 border-b-2 text-gray-400 hover:text-gray-200 border-transparent flex items-center justify-center space-x-1.5 transition';
-        tabStyleBtn.className = 'flex-1 py-2.5 border-b-2 text-gray-400 hover:text-gray-200 border-transparent flex items-center justify-center space-x-1.5 transition';
-        tabLayersBtn.className = 'flex-1 py-2.5 border-b-2 text-gray-400 hover:text-gray-200 border-transparent flex items-center justify-center space-x-1.5 transition relative';
+        tabGearBtn.className = 'flex-1 py-2.5 border-b-2 theme-text-muted hover:text-cyan-500 border-transparent flex items-center justify-center space-x-1.5 transition';
+        tabStyleBtn.className = 'flex-1 py-2.5 border-b-2 theme-text-muted hover:text-cyan-500 border-transparent flex items-center justify-center space-x-1.5 transition';
+        tabLayersBtn.className = 'flex-1 py-2.5 border-b-2 theme-text-muted hover:text-cyan-500 border-transparent flex items-center justify-center space-x-1.5 transition relative';
 
         tabGear.classList.add('hidden');
         tabStyle.classList.add('hidden');
         tabLayers.classList.add('hidden');
 
         if (activeTab === 'gear') {
-          tabGearBtn.className = 'flex-1 py-2.5 border-b-2 border-cyan-500 text-cyan-400 font-semibold flex items-center justify-center space-x-1.5 transition';
+          tabGearBtn.className = 'flex-1 py-2.5 border-b-2 border-cyan-500 text-cyan-500 font-semibold flex items-center justify-center space-x-1.5 transition';
           tabGear.classList.remove('hidden');
         } else if (activeTab === 'style') {
-          tabStyleBtn.className = 'flex-1 py-2.5 border-b-2 border-cyan-500 text-cyan-400 font-semibold flex items-center justify-center space-x-1.5 transition';
+          tabStyleBtn.className = 'flex-1 py-2.5 border-b-2 border-cyan-500 text-cyan-500 font-semibold flex items-center justify-center space-x-1.5 transition';
           tabStyle.classList.remove('hidden');
         } else if (activeTab === 'layers') {
-          tabLayersBtn.className = 'flex-1 py-2.5 border-b-2 border-cyan-500 text-cyan-400 font-semibold flex items-center justify-center space-x-1.5 transition relative';
+          tabLayersBtn.className = 'flex-1 py-2.5 border-b-2 border-cyan-500 text-cyan-500 font-semibold flex items-center justify-center space-x-1.5 transition relative';
           tabLayers.classList.remove('hidden');
         }
       }
@@ -1006,23 +1072,23 @@
 
         state.layers.forEach((layer) => {
           const item = document.createElement('div');
-          item.className = 'p-2 rounded-xl bg-gray-950 border border-gray-800 flex items-center justify-between text-xs transition';
+          item.className = 'p-2 rounded-xl theme-card border flex items-center justify-between text-xs transition';
 
           const colorBadge = layer.colorMode === 'solid' 
-            ? `<span class="w-3 h-3 rounded-full border border-gray-700" style="background-color: ${layer.color1}"></span>`
+            ? `<span class="w-3 h-3 rounded-full border border-gray-500" style="background-color: ${layer.color1}"></span>`
             : layer.colorMode === 'gradient'
-            ? `<span class="w-3 h-3 rounded-full border border-gray-700" style="background: linear-gradient(135deg, ${layer.grad1}, ${layer.grad2})"></span>`
-            : `<span class="w-3 h-3 rounded-full border border-gray-700 bg-gradient-to-r from-red-500 via-green-500 to-blue-500"></span>`;
+            ? `<span class="w-3 h-3 rounded-full border border-gray-500" style="background: linear-gradient(135deg, ${layer.grad1}, ${layer.grad2})"></span>`
+            : `<span class="w-3 h-3 rounded-full border border-gray-500 bg-gradient-to-r from-red-500 via-green-500 to-blue-500"></span>`;
 
           item.innerHTML = `
             <div class="flex items-center space-x-2">
               ${colorBadge}
               <div>
-                <span class="font-mono font-semibold text-gray-200">R:${layer.R} r:${layer.r} d:${layer.d}</span>
-                <span class="text-[10px] text-gray-400 capitalize block">${layer.mechanism} (${layer.colorMode})</span>
+                <span class="font-mono font-semibold">R:${layer.R} r:${layer.r} d:${layer.d}</span>
+                <span class="text-[10px] theme-text-muted capitalize block">${layer.mechanism} (${layer.colorMode})</span>
               </div>
             </div>
-            <button data-id="${layer.id}" class="btn-del-layer text-gray-400 hover:text-rose-400 transition p-1">
+            <button data-id="${layer.id}" class="btn-del-layer theme-text-muted hover:text-rose-500 transition p-1">
               <i class="fa-solid fa-trash-can text-xs"></i>
             </button>
           `;
@@ -1052,6 +1118,31 @@
         }
       }
 
+      function applyGlobalTheme(theme) {
+        state.globalTheme = theme;
+        if (theme === 'light') {
+          document.body.classList.remove('theme-dark');
+          document.body.classList.add('theme-light');
+          document.documentElement.classList.remove('dark');
+          themeIconSun.classList.remove('hidden');
+          themeIconMoon.classList.add('hidden');
+          
+          // Switch Canvas default to White on Light Theme selection
+          state.bgColour = 'white';
+        } else {
+          document.body.classList.remove('theme-light');
+          document.body.classList.add('theme-dark');
+          document.documentElement.classList.add('dark');
+          themeIconMoon.classList.remove('hidden');
+          themeIconSun.classList.add('hidden');
+          
+          // Switch Canvas default to Black on Dark Theme selection
+          state.bgColour = 'black';
+        }
+
+        syncInputs();
+      }
+
       function syncInputs() {
         numR.value = state.R;
         inputR.value = state.R;
@@ -1066,20 +1157,20 @@
         valResolution.textContent = state.resolution >= 4 ? 'High' : state.resolution === 3 ? 'Medium' : 'Low';
 
         if (state.mechanism === 'inside') {
-          typeInsideBtn.className = 'py-1.5 text-xs font-semibold rounded-lg transition shadow-sm bg-gray-800 text-cyan-400';
-          typeOutsideBtn.className = 'py-1.5 text-xs font-semibold rounded-lg transition text-gray-400 hover:text-white';
+          typeInsideBtn.className = 'py-1.5 text-xs font-semibold rounded-lg transition shadow-sm bg-cyan-500 text-white';
+          typeOutsideBtn.className = 'py-1.5 text-xs font-semibold rounded-lg transition theme-text-muted hover:text-cyan-500';
         } else {
-          typeOutsideBtn.className = 'py-1.5 text-xs font-semibold rounded-lg transition shadow-sm bg-gray-800 text-indigo-400';
-          typeInsideBtn.className = 'py-1.5 text-xs font-semibold rounded-lg transition text-gray-400 hover:text-white';
+          typeOutsideBtn.className = 'py-1.5 text-xs font-semibold rounded-lg transition shadow-sm bg-indigo-500 text-white';
+          typeInsideBtn.className = 'py-1.5 text-xs font-semibold rounded-lg transition theme-text-muted hover:text-cyan-500';
         }
 
         if (state.bgColour === 'black') {
-          bgBlackBtn.className = 'py-1.5 text-xs font-semibold rounded-lg border border-cyan-500 bg-gray-800 text-cyan-400 flex items-center justify-center space-x-1.5';
-          bgWhiteBtn.className = 'py-1.5 text-xs font-semibold rounded-lg border border-transparent text-gray-400 hover:text-white flex items-center justify-center space-x-1.5';
+          bgBlackBtn.className = 'py-1.5 text-xs font-semibold rounded-lg border border-cyan-500 bg-gray-900 text-cyan-400 flex items-center justify-center space-x-1.5 shadow-sm';
+          bgWhiteBtn.className = 'py-1.5 text-xs font-semibold rounded-lg border border-transparent theme-text-muted hover:text-cyan-500 flex items-center justify-center space-x-1.5';
           exportBgName.textContent = 'Black';
         } else {
-          bgWhiteBtn.className = 'py-1.5 text-xs font-semibold rounded-lg border border-cyan-500 bg-gray-800 text-cyan-400 flex items-center justify-center space-x-1.5';
-          bgBlackBtn.className = 'py-1.5 text-xs font-semibold rounded-lg border border-transparent text-gray-400 hover:text-white flex items-center justify-center space-x-1.5';
+          bgWhiteBtn.className = 'py-1.5 text-xs font-semibold rounded-lg border border-cyan-500 bg-white text-gray-900 flex items-center justify-center space-x-1.5 shadow-sm';
+          bgBlackBtn.className = 'py-1.5 text-xs font-semibold rounded-lg border border-transparent theme-text-muted hover:text-cyan-500 flex items-center justify-center space-x-1.5';
           exportBgName.textContent = 'White';
         }
 
@@ -1087,9 +1178,15 @@
         render();
       }
 
-      // Background Toggle Buttons
+      // Background Toggle Buttons (Separate Canvas Background Control)
       bgBlackBtn.addEventListener('click', () => { state.bgColour = 'black'; syncInputs(); });
       bgWhiteBtn.addEventListener('click', () => { state.bgColour = 'white'; syncInputs(); });
+
+      // Global Theme Toggle Listener
+      btnThemeToggle.addEventListener('click', () => {
+        const nextTheme = state.globalTheme === 'dark' ? 'light' : 'dark';
+        applyGlobalTheme(nextTheme);
+      });
 
       typeInsideBtn.addEventListener('click', () => { stopAnimation(); state.mechanism = 'inside'; syncInputs(); });
       typeOutsideBtn.addEventListener('click', () => { stopAnimation(); state.mechanism = 'outside'; syncInputs(); });
@@ -1114,9 +1211,9 @@
         state.colorMode = 'solid';
         solidColorContainer.classList.remove('hidden');
         gradientColorContainer.classList.add('hidden');
-        colorModeSolid.className = 'py-1 px-2 text-xs font-medium rounded-lg border border-cyan-500 bg-cyan-500/10 text-cyan-400';
-        colorModeRainbow.className = 'py-1 px-2 text-xs font-medium rounded-lg border border-gray-700 text-gray-300 hover:border-gray-500';
-        colorModeGradient.className = 'py-1 px-2 text-xs font-medium rounded-lg border border-gray-700 text-gray-300 hover:border-gray-500';
+        colorModeSolid.className = 'py-1 px-2 text-xs font-medium rounded-lg border border-cyan-500 bg-cyan-500/10 text-cyan-500';
+        colorModeRainbow.className = 'py-1 px-2 text-xs font-medium rounded-lg border theme-border theme-text-muted hover:border-cyan-500';
+        colorModeGradient.className = 'py-1 px-2 text-xs font-medium rounded-lg border theme-border theme-text-muted hover:border-cyan-500';
         render();
       });
 
@@ -1124,9 +1221,9 @@
         state.colorMode = 'rainbow';
         solidColorContainer.classList.add('hidden');
         gradientColorContainer.classList.add('hidden');
-        colorModeRainbow.className = 'py-1 px-2 text-xs font-medium rounded-lg border border-cyan-500 bg-cyan-500/10 text-cyan-400';
-        colorModeSolid.className = 'py-1 px-2 text-xs font-medium rounded-lg border border-gray-700 text-gray-300 hover:border-gray-500';
-        colorModeGradient.className = 'py-1 px-2 text-xs font-medium rounded-lg border border-gray-700 text-gray-300 hover:border-gray-500';
+        colorModeRainbow.className = 'py-1 px-2 text-xs font-medium rounded-lg border border-cyan-500 bg-cyan-500/10 text-cyan-500';
+        colorModeSolid.className = 'py-1 px-2 text-xs font-medium rounded-lg border theme-border theme-text-muted hover:border-cyan-500';
+        colorModeGradient.className = 'py-1 px-2 text-xs font-medium rounded-lg border theme-border theme-text-muted hover:border-cyan-500';
         render();
       });
 
@@ -1135,9 +1232,9 @@
         solidColorContainer.classList.add('hidden');
         gradientColorContainer.classList.remove('hidden');
         gradientColorContainer.classList.add('flex');
-        colorModeGradient.className = 'py-1 px-2 text-xs font-medium rounded-lg border border-cyan-500 bg-cyan-500/10 text-cyan-400';
-        colorModeSolid.className = 'py-1 px-2 text-xs font-medium rounded-lg border border-gray-700 text-gray-300 hover:border-gray-500';
-        colorModeRainbow.className = 'py-1 px-2 text-xs font-medium rounded-lg border border-gray-700 text-gray-300 hover:border-gray-500';
+        colorModeGradient.className = 'py-1 px-2 text-xs font-medium rounded-lg border border-cyan-500 bg-cyan-500/10 text-cyan-500';
+        colorModeSolid.className = 'py-1 px-2 text-xs font-medium rounded-lg border theme-border theme-text-muted hover:border-cyan-500';
+        colorModeRainbow.className = 'py-1 px-2 text-xs font-medium rounded-lg border theme-border theme-text-muted hover:border-cyan-500';
         render();
       });
 
@@ -1269,17 +1366,6 @@
         render();
       });
 
-      // Theme Toggle
-      btnThemeToggle.addEventListener('click', () => {
-        state.darkMode = !state.darkMode;
-        if (state.darkMode) {
-          document.documentElement.classList.add('dark');
-        } else {
-          document.documentElement.classList.remove('dark');
-        }
-        render();
-      });
-
       // Export Dialog Handling
       let exportFormat = 'png';
       const exportFmtPng = document.getElementById('export-fmt-png');
@@ -1287,14 +1373,14 @@
 
       exportFmtPng.addEventListener('click', () => {
         exportFormat = 'png';
-        exportFmtPng.className = 'py-2 rounded-xl border border-emerald-500 bg-emerald-500/10 text-emerald-400 font-semibold';
-        exportFmtJpg.className = 'py-2 rounded-xl border border-gray-700 text-gray-300 hover:border-gray-500';
+        exportFmtPng.className = 'py-2 rounded-xl border border-emerald-500 bg-emerald-500/10 text-emerald-500 font-semibold';
+        exportFmtJpg.className = 'py-2 rounded-xl border theme-border theme-text-muted hover:border-emerald-500';
       });
 
       exportFmtJpg.addEventListener('click', () => {
         exportFormat = 'jpg';
-        exportFmtJpg.className = 'py-2 rounded-xl border border-emerald-500 bg-emerald-500/10 text-emerald-400 font-semibold';
-        exportFmtPng.className = 'py-2 rounded-xl border border-gray-700 text-gray-300 hover:border-gray-500';
+        exportFmtJpg.className = 'py-2 rounded-xl border border-emerald-500 bg-emerald-500/10 text-emerald-500 font-semibold';
+        exportFmtPng.className = 'py-2 rounded-xl border theme-border theme-text-muted hover:border-emerald-500';
       });
 
       btnOpenExport.addEventListener('click', () => {
@@ -1321,7 +1407,7 @@
           eCtx.fillStyle = state.bgColour === 'black' ? '#030712' : '#ffffff';
           eCtx.fillRect(0, 0, resSelect, resSelect);
         } else if (exportFormat === 'jpg') {
-          // JPG does not support transparency
+          // JPG transparent fallback
           eCtx.fillStyle = '#ffffff';
           eCtx.fillRect(0, 0, resSelect, resSelect);
         }
@@ -1365,10 +1451,9 @@
         if (e.target === mathsModal) closeMathsModal();
       });
 
-      // Init
-      document.documentElement.classList.add('dark');
+      // Initialize
+      applyGlobalTheme('dark');
       setupCanvas();
-      syncInputs();
     });
   </script>
 </body>
