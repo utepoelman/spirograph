@@ -19,14 +19,6 @@
           fontFamily: {
             sans: ['Inter', 'sans-serif'],
             mono: ['JetBrains Mono', 'monospace'],
-          },
-          colors: {
-            brand: {
-              50: '#f0f9ff',
-              500: '#06b6d4',
-              600: '#0891b2',
-              700: '#0e7490',
-            }
           }
         }
       }
@@ -39,7 +31,6 @@
       overflow: hidden;
       user-select: none;
     }
-    /* Compact Scrollbars */
     ::-webkit-scrollbar {
       width: 5px;
       height: 5px;
@@ -65,7 +56,6 @@
 </head>
 <body class="bg-gray-950 text-gray-100 h-full flex flex-col font-sans antialiased transition-colors duration-300">
 
-  <!-- Header Bar -->
   <header class="h-12 min-h-[48px] px-4 border-b border-gray-800 bg-gray-900/90 dark:bg-gray-900/90 bg-white/90 text-gray-900 dark:text-white flex items-center justify-between shrink-0 glass-panel z-20">
     <div class="flex items-center space-x-2.5">
       <div class="w-7 h-7 rounded-lg bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center shadow-md shadow-cyan-500/20">
@@ -73,15 +63,15 @@
       </div>
       <div>
         <h1 class="font-bold text-sm tracking-tight leading-none">Spirograph Studio</h1>
-        <p class="text-[10px] text-gray-500 dark:text-gray-400 leading-tight">Parametric Visualiser & Maths Explorer</p>
+        <p class="text-[10px] text-gray-500 dark:text-gray-400 leading-tight">Parametric Visualiser & NZ Maths Explorer</p>
       </div>
     </div>
 
-    <!-- Right Header Quick Controls -->
+    <!-- Header Quick Actions -->
     <div class="flex items-center space-x-2">
-      <div class="hidden md:flex items-center space-x-3 px-3 py-1 rounded-lg bg-gray-800/60 border border-gray-700/50 text-xs">
+      <div class="hidden lg:flex items-center space-x-3 px-3 py-1 rounded-lg bg-gray-800/60 border border-gray-700/50 text-xs">
         <span class="text-gray-400">Petals: <strong id="calc-petals" class="text-cyan-400 font-mono">9</strong></span>
-        <span class="text-gray-600 dark:text-gray-600">|</span>
+        <span class="text-gray-600">|</span>
         <span class="text-gray-400">Full Turns: <strong id="calc-rotations" class="text-indigo-400 font-mono">4</strong></span>
       </div>
 
@@ -91,34 +81,33 @@
       </button>
 
       <!-- Theme Switcher -->
-      <button id="btn-theme-toggle" class="p-1.5 rounded-lg bg-gray-800 text-gray-300 hover:bg-gray-700 transition" title="Toggle Theme">
+      <button id="btn-theme-toggle" class="p-1.5 rounded-lg bg-gray-800 text-gray-300 hover:bg-gray-700 transition" title="Toggle Theme (UI)">
         <i class="fa-solid fa-sun text-amber-500 dark:hidden text-xs"></i>
         <i class="fa-solid fa-moon text-indigo-400 hidden dark:block text-xs"></i>
       </button>
 
       <!-- Export Button -->
-      <button id="btn-export" class="px-2.5 py-1 text-xs font-semibold rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-600/20 transition flex items-center space-x-1">
+      <button id="btn-open-export" class="px-2.5 py-1 text-xs font-semibold rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-600/20 transition flex items-center space-x-1">
         <i class="fa-solid fa-download"></i>
-        <span>Export</span>
+        <span>Export Art</span>
       </button>
     </div>
   </header>
 
-  <!-- Main Workspace -->
   <main class="flex-1 flex flex-col md:flex-row overflow-hidden relative">
 
-    <!-- LEFT PANEL: Tabbed Controls -->
+    <!-- LEFT PANEL: Controls -->
     <aside class="w-full md:w-80 lg:w-96 border-r border-gray-800 bg-gray-900/60 flex flex-col h-1/2 md:h-full shrink-0 z-10">
 
       <!-- Navigation Tabs -->
       <div class="flex border-b border-gray-800 bg-gray-900/80 text-xs font-medium">
         <button id="tab-gear-btn" class="flex-1 py-2.5 border-b-2 border-cyan-500 text-cyan-400 font-semibold flex items-center justify-center space-x-1.5 transition">
           <i class="fa-solid fa-gear"></i>
-          <span>Gear Wheels</span>
+          <span>Gears</span>
         </button>
         <button id="tab-style-btn" class="flex-1 py-2.5 border-b-2 border-transparent text-gray-400 hover:text-gray-200 flex items-center justify-center space-x-1.5 transition">
           <i class="fa-solid fa-palette"></i>
-          <span>Style & Pen</span>
+          <span>Style & Canvas</span>
         </button>
         <button id="tab-layers-btn" class="flex-1 py-2.5 border-b-2 border-transparent text-gray-400 hover:text-gray-200 flex items-center justify-center space-x-1.5 transition relative">
           <i class="fa-solid fa-layer-group"></i>
@@ -128,13 +117,13 @@
       </div>
 
       <!-- Tab Content Area -->
-      <div class="flex-1 overflow-y-auto p-4 space-y-4">
+      <div class="flex-1 overflow-y-auto p-3.5 space-y-3.5">
 
         <!-- TAB 1: Gear Parameters -->
-        <div id="tab-gear" class="space-y-4">
+        <div id="tab-gear" class="space-y-3.5">
           <!-- Wheel Placement Switcher -->
           <div>
-            <label class="block text-xs font-medium text-gray-400 mb-1.5">Wheel Placement (Mechanism)</label>
+            <label class="block text-xs font-medium text-gray-400 mb-1">Wheel Placement (Mechanism)</label>
             <div class="grid grid-cols-2 gap-1.5 p-1 bg-gray-950 rounded-xl border border-gray-800">
               <button id="type-inside" class="py-1.5 text-xs font-semibold rounded-lg transition shadow-sm bg-gray-800 text-cyan-400">
                 Inside (Hypotrochoid)
@@ -148,7 +137,7 @@
           <!-- Outer Ring Radius (R) -->
           <div>
             <div class="flex justify-between items-center mb-1">
-              <label for="input-R" class="text-xs font-medium text-gray-300">Fixed Outer Ring Radius (<span class="font-mono text-cyan-400">R</span>)</label>
+              <label for="input-R" class="text-xs font-medium text-gray-300">Outer Ring Radius (<span class="font-mono text-cyan-400">R</span>)</label>
               <input type="number" id="num-R" min="10" max="400" value="180" class="w-14 px-1.5 py-0.5 text-xs text-right rounded border border-gray-700 bg-gray-950 text-white font-mono">
             </div>
             <input type="range" id="input-R" min="10" max="400" value="180" class="w-full accent-cyan-500 h-1.5 bg-gray-800 rounded-lg appearance-none cursor-pointer">
@@ -168,7 +157,7 @@
             <div class="flex justify-between items-center mb-1">
               <div class="flex items-center space-x-1">
                 <label for="input-d" class="text-xs font-medium text-gray-300">Pen Hole Distance (<span class="font-mono text-rose-400">d</span>)</label>
-                <span id="extended-indicator" class="hidden text-[9px] px-1 py-0.1 rounded bg-rose-500/10 text-rose-400 font-semibold border border-rose-500/20">d &gt; r</span>
+                <span id="extended-indicator" class="hidden text-[9px] px-1 py-0.1 rounded bg-rose-500/20 text-rose-300 font-semibold border border-rose-500/30">d &gt; r (Extended)</span>
               </div>
               <input type="number" id="num-d" min="0" max="400" value="100" class="w-14 px-1.5 py-0.5 text-xs text-right rounded border border-gray-700 bg-gray-950 text-white font-mono">
             </div>
@@ -177,24 +166,39 @@
 
           <!-- Presets Dropdown Selector -->
           <div class="pt-2 border-t border-gray-800">
-            <label class="block text-xs font-medium text-gray-400 mb-1.5">Load Geometry Preset</label>
+            <label class="block text-xs font-medium text-gray-400 mb-1">Geometry Presets</label>
             <select id="preset-selector" class="w-full px-2.5 py-1.5 text-xs rounded-xl border border-gray-700 bg-gray-950 text-gray-200 focus:outline-none focus:border-cyan-500">
-              <option value="">-- Choose Preset --</option>
-              <option value="star">Classic 5-Petal Star (Hypo)</option>
-              <option value="extended-wild">Extended Wild Orbit (d > r)</option>
+              <option value="">-- Choose Geometry --</option>
+              <option value="star">5-Petal Star (Hypo)</option>
+              <option value="extended-wild">Wild Orbit (Extended Pen d > r)</option>
               <option value="sunburst">Epitrochoid Sunburst (Epi)</option>
               <option value="deltoid">3-Cusp Deltoid Web</option>
               <option value="atomic">Dense Atomic Lattice</option>
-              <option value="blossom">Harmonic Floral Rosette</option>
+              <option value="blossom">Floral Rosette</option>
             </select>
           </div>
         </div>
 
-        <!-- TAB 2: Style & Pen Controls -->
-        <div id="tab-style" class="space-y-4 hidden">
+        <!-- TAB 2: Style & Canvas Controls -->
+        <div id="tab-style" class="space-y-3.5 hidden">
+          <!-- Canvas Background Toggle (Black / White) -->
+          <div>
+            <label class="block text-xs font-medium text-gray-400 mb-1">Canvas Background Colour</label>
+            <div class="grid grid-cols-2 gap-1.5 p-1 bg-gray-950 rounded-xl border border-gray-800">
+              <button id="bg-black-btn" class="py-1.5 text-xs font-semibold rounded-lg border border-cyan-500 bg-gray-800 text-cyan-400 flex items-center justify-center space-x-1.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-black border border-gray-600"></span>
+                <span>Black Canvas</span>
+              </button>
+              <button id="bg-white-btn" class="py-1.5 text-xs font-semibold rounded-lg border border-transparent text-gray-400 hover:text-white flex items-center justify-center space-x-1.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-white border border-gray-300"></span>
+                <span>White Canvas</span>
+              </button>
+            </div>
+          </div>
+
           <!-- Stroke Colour Mode Selection -->
           <div>
-            <label class="block text-xs font-medium text-gray-400 mb-1.5">Stroke Colour Mode</label>
+            <label class="block text-xs font-medium text-gray-400 mb-1">Stroke Colour Mode</label>
             <div class="grid grid-cols-3 gap-1.5">
               <button id="color-mode-solid" class="py-1 px-2 text-xs font-medium rounded-lg border border-cyan-500 bg-cyan-500/10 text-cyan-400">Solid</button>
               <button id="color-mode-rainbow" class="py-1 px-2 text-xs font-medium rounded-lg border border-gray-700 text-gray-300 hover:border-gray-500">Spectral</button>
@@ -204,7 +208,7 @@
 
           <!-- Solid Colour Selector -->
           <div id="solid-color-container" class="flex items-center justify-between">
-            <label class="text-xs font-medium text-gray-300">Curve Colour</label>
+            <label class="text-xs font-medium text-gray-300">Curve Stroke Colour</label>
             <input type="color" id="input-color-1" value="#06b6d4" class="w-7 h-7 rounded cursor-pointer bg-transparent border-0">
           </div>
 
@@ -240,7 +244,7 @@
           <!-- Resolution -->
           <div>
             <div class="flex justify-between items-center mb-1">
-              <label class="text-xs font-medium text-gray-300">Curve Smoothness / Resolution</label>
+              <label class="text-xs font-medium text-gray-300">Resolution / Smoothness</label>
               <span id="val-resolution" class="text-[11px] font-mono text-gray-400">High</span>
             </div>
             <input type="range" id="input-resolution" min="1" max="5" step="1" value="4" class="w-full accent-cyan-500 h-1.5 bg-gray-800 rounded-lg appearance-none cursor-pointer">
@@ -248,7 +252,10 @@
 
           <!-- Show Rolling Gear Guides -->
           <div class="flex items-center justify-between pt-1">
-            <span class="text-xs font-medium text-gray-300">Show Rolling Wheel & Arm Guides</span>
+            <div>
+              <span class="text-xs font-semibold text-gray-200 block">Show Rolling Wheel & Arm Guides</span>
+              <span class="text-[10px] text-gray-400">Displays outer ring, inner wheel & pen arm</span>
+            </div>
             <label class="relative inline-flex items-center cursor-pointer">
               <input type="checkbox" id="chk-guides" class="sr-only peer" checked>
               <div class="w-8 h-4 bg-gray-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-cyan-500"></div>
@@ -256,7 +263,7 @@
           </div>
         </div>
 
-        <!-- TAB 3: Layer Management Stack -->
+        <!-- TAB 3: Layer Stack -->
         <div id="tab-layers" class="space-y-3 hidden">
           <div class="flex items-center justify-between pb-2 border-b border-gray-800">
             <span class="text-xs font-medium text-gray-400">Composed Layers</span>
@@ -267,18 +274,17 @@
 
           <div id="layers-list" class="space-y-2 max-h-52 overflow-y-auto pr-1">
             <div id="empty-layers-msg" class="text-center py-6 text-xs text-gray-500 italic">
-              No saved layers. Click 'Add Layer' to stack overlapping curves.
+              No saved layers. Click 'Add Layer' below to store overlapping curves.
             </div>
           </div>
         </div>
 
       </div>
 
-      <!-- Sidebar Bottom Action Panel -->
-      <div class="p-3 border-t border-gray-800 bg-gray-900/90 space-y-2.5 shrink-0">
+      <div class="p-3 border-t border-gray-800 bg-gray-900/90 space-y-2 shrink-0">
 
         <!-- Animation Speed Control & Progress -->
-        <div class="space-y-1.5 p-2 rounded-xl bg-gray-950/80 border border-gray-800">
+        <div class="space-y-1 p-2 rounded-xl bg-gray-950/80 border border-gray-800">
           <div class="flex justify-between items-center text-[11px]">
             <span class="text-gray-400 flex items-center space-x-1">
               <i class="fa-solid fa-gauge-high text-cyan-400"></i>
@@ -289,7 +295,7 @@
           <input type="range" id="input-speed" min="1" max="100" value="45" class="w-full accent-cyan-500 h-1.5 bg-gray-800 rounded-lg appearance-none cursor-pointer">
 
           <!-- Loop Progress Bar -->
-          <div class="space-y-1 pt-1">
+          <div class="space-y-0.5 pt-0.5">
             <div class="flex justify-between text-[10px] text-gray-400">
               <span>Loop Progress</span>
               <span id="progress-text" class="font-mono text-indigo-400">0%</span>
@@ -307,7 +313,7 @@
             <span id="btn-animate-text">Animate</span>
           </button>
 
-          <button id="btn-instant" class="py-2 px-2 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-200 font-semibold text-xs border border-gray-700 transition flex items-center justify-center space-x-1" title="Render entire curve instantly">
+          <button id="btn-instant" class="py-2 px-2 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-200 font-semibold text-xs border border-gray-700 transition flex items-center justify-center space-x-1">
             <i class="fa-solid fa-bolt text-amber-400"></i>
             <span>Instant</span>
           </button>
@@ -336,7 +342,7 @@
 
     </aside>
 
-    <!-- RIGHT PANEL: Canvas Workspace -->
+    <!-- RIGHT PANEL: Canvas Viewport -->
     <section class="flex-1 bg-gray-950 flex flex-col items-center justify-center p-3 relative h-1/2 md:h-full overflow-hidden">
 
       <div id="canvas-container" class="relative w-full h-full max-w-[85vh] max-h-[85vh] aspect-square rounded-2xl overflow-hidden bg-gray-900 border border-gray-800 flex items-center justify-center shadow-2xl">
@@ -360,7 +366,59 @@
 
   </main>
 
-  <!-- Mathematical Explainer Modal -->
+  <div id="export-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-950/80 glass-panel opacity-0 pointer-events-none transition-opacity duration-300">
+    <div class="bg-gray-900 rounded-3xl max-w-md w-full p-5 shadow-2xl border border-gray-800 space-y-4">
+      <div class="flex justify-between items-center pb-2 border-b border-gray-800">
+        <div class="flex items-center space-x-2">
+          <i class="fa-solid fa-download text-emerald-400"></i>
+          <h3 class="font-bold text-white text-sm">Export Created Image</h3>
+        </div>
+        <button id="btn-close-export" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="space-y-3 text-xs text-gray-300">
+        <div>
+          <label class="block mb-1 text-gray-400">File Format</label>
+          <div class="grid grid-cols-2 gap-2">
+            <button id="export-fmt-png" class="py-2 rounded-xl border border-emerald-500 bg-emerald-500/10 text-emerald-400 font-semibold">PNG Image</button>
+            <button id="export-fmt-jpg" class="py-2 rounded-xl border border-gray-700 text-gray-300 hover:border-gray-500">JPG Image</button>
+          </div>
+        </div>
+
+        <div>
+          <label class="block mb-1 text-gray-400">Background Inclusion</label>
+          <div class="space-y-1.5">
+            <label class="flex items-center space-x-2 cursor-pointer">
+              <input type="radio" name="export-bg" value="current" checked class="accent-emerald-500">
+              <span>Include current canvas background colour (<span id="export-bg-name">Black</span>)</span>
+            </label>
+            <label class="flex items-center space-x-2 cursor-pointer">
+              <input type="radio" name="export-bg" value="transparent" class="accent-emerald-500">
+              <span>Transparent background (PNG only)</span>
+            </label>
+          </div>
+        </div>
+
+        <div>
+          <label class="block mb-1 text-gray-400">Export Resolution</label>
+          <select id="export-res" class="w-full px-2.5 py-1.5 text-xs rounded-xl border border-gray-700 bg-gray-950 text-gray-200">
+            <option value="1000">Standard (1000 x 1000 px)</option>
+            <option value="2000" selected>High-Res Crisp (2000 x 2000 px)</option>
+            <option value="3000">Ultra Print (3000 x 3000 px)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="pt-2 flex justify-end space-x-2">
+        <button id="btn-cancel-export" class="px-3 py-1.5 rounded-xl border border-gray-700 text-gray-300">Cancel</button>
+        <button id="btn-download-now" class="px-4 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold flex items-center space-x-1.5">
+          <i class="fa-solid fa-file-export"></i>
+          <span>Download Image</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
   <div id="maths-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-950/80 glass-panel opacity-0 pointer-events-none transition-opacity duration-300">
     <div class="bg-gray-900 rounded-3xl max-w-2xl w-full max-h-[85vh] flex flex-col shadow-2xl border border-gray-800 overflow-hidden transform scale-95 transition-transform duration-300" id="maths-modal-content">
 
@@ -372,7 +430,7 @@
           </div>
           <div>
             <h3 class="font-bold text-white text-sm">The Maths Behind Spirographs</h3>
-            <p class="text-[11px] text-gray-400">Parametric equations, gear geometry and symmetry principles</p>
+            <p class="text-[11px] text-gray-400">Parametric equations, non-slip kinematics & geometry in NZ English</p>
           </div>
         </div>
         <button id="btn-close-maths" class="w-7 h-7 rounded-full bg-gray-800 text-gray-400 hover:text-white flex items-center justify-center transition">
@@ -380,71 +438,89 @@
         </button>
       </div>
 
-      <!-- Modal Content -->
+      <!-- Modal Content Body -->
       <div class="p-5 overflow-y-auto space-y-5 text-xs text-gray-300 leading-relaxed">
-        <section>
-          <h4 class="font-bold text-white text-sm mb-1.5 flex items-center space-x-1.5">
-            <i class="fa-solid fa-circle-info text-cyan-400"></i>
-            <span>What is a Spirograph Curve?</span>
-          </h4>
-          <p>
-            A mathematical spirograph models the trajectory traced out by a fixed pen point attached to a rolling wheel moving without slipping along the circumference of a stationary circular ring.
-          </p>
-          <div class="mt-2.5 grid grid-cols-1 sm:grid-cols-2 gap-2">
-            <div class="p-3 rounded-xl bg-cyan-950/30 border border-cyan-800/50">
-              <span class="font-semibold text-cyan-300 block mb-0.5">Hypotrochoid (Inside)</span>
-              <p class="text-[11px] text-cyan-400">
-                Created when the smaller wheel rolls along the <em>inside</em> perimeter of the fixed ring radius \(R\).
-              </p>
-            </div>
-            <div class="p-3 rounded-xl bg-indigo-950/30 border border-indigo-800/50">
-              <span class="font-semibold text-indigo-300 block mb-0.5">Epitrochoid (Outside)</span>
-              <p class="text-[11px] text-indigo-400">
-                Created when the smaller wheel rolls along the <em>outside</em> exterior boundary of fixed ring radius \(R\).
-              </p>
-            </div>
-          </div>
-        </section>
 
+        <!-- Section 1: Non-slip condition -->
         <section class="space-y-2">
           <h4 class="font-bold text-white text-sm flex items-center space-x-1.5">
-            <i class="fa-solid fa-calculator text-indigo-400"></i>
-            <span>Parametric Maths Equations</span>
+            <i class="fa-solid fa-gear text-cyan-400"></i>
+            <span>1. The Non-Slip Rolling Condition</span>
           </h4>
-          <p class="text-[11px] text-gray-400">
-            Given fixed ring radius <span class="font-mono text-cyan-400 font-bold">R</span>, rolling wheel radius <span class="font-mono text-indigo-400 font-bold">r</span>, pen distance from wheel centre <span class="font-mono text-rose-400 font-bold">d</span>, and rotation angle <span class="font-mono text-amber-400">t</span>:
+          <p>
+            When a smaller wheel of radius <strong class="text-indigo-400 font-mono">r</strong> rolls along a fixed outer ring gear of radius <strong class="text-cyan-400 font-mono">R</strong> without slipping, the length of the arc traversed along the fixed ring must exactly equal the length of the arc rolled along the wheel boundary.
+          </p>
+          <div class="p-3 rounded-xl bg-cyan-950/30 border border-cyan-800/50 space-y-1.5 font-mono text-[11px]">
+            <p class="text-cyan-300 font-semibold">Arc Length Equivalence Equation:</p>
+            <p class="pl-2 border-l-2 border-cyan-500 text-gray-200">s = R &middot; &theta; = r &middot; &phi;</p>
+            <p class="text-gray-400 text-[10px]">
+              Where <span class="text-amber-400">&theta;</span> is the orbital angle around the main centre, and <span class="text-indigo-400">&phi;</span> is the total rotation angle of the rolling wheel.
+            </p>
+          </div>
+          <p>
+            Rearranging gives the rotation of the inner wheel relative to its own centre: <span class="font-mono text-indigo-300">&phi; = (R / r) &middot; &theta;</span>.
+          </p>
+        </section>
+
+        <!-- Section 2: Deriving Wheel Centre & Pen Position -->
+        <section class="space-y-2">
+          <h4 class="font-bold text-white text-sm flex items-center space-x-1.5">
+            <i class="fa-solid fa-arrows-to-dot text-indigo-400"></i>
+            <span>2. Vector Derivation of Pen Coordinates (x, y)</span>
+          </h4>
+          <p>
+            The pen position is found by vector addition: adding the vector from the origin to the centre of the rolling wheel, plus the vector from the wheel centre to the pen hole at distance <strong class="text-rose-400 font-mono">d</strong>.
           </p>
 
-          <div class="p-3 rounded-xl bg-gray-950 font-mono text-[11px] text-gray-200 space-y-2 border border-gray-800">
+          <div class="p-3 rounded-xl bg-gray-950 border border-gray-800 space-y-2 font-mono text-[11px]">
             <div>
-              <span class="text-cyan-400 font-bold block mb-0.5">Hypotrochoid Equations:</span>
-              <p class="pl-2 border-l-2 border-cyan-500">x(t) = (R - r) &middot; cos(t) + d &middot; cos((R - r) &middot; t / r)</p>
-              <p class="pl-2 border-l-2 border-cyan-500">y(t) = (R - r) &middot; sin(t) - d &middot; sin((R - r) &middot; t / r)</p>
+              <span class="text-cyan-400 font-bold block mb-0.5">Hypotrochoid (Wheel Inside Fixed Ring):</span>
+              <p class="text-gray-400 text-[10px]">Wheel Centre: C = ((R - r)cos&theta;, (R - r)sin&theta;)</p>
+              <p class="pl-2 border-l-2 border-cyan-500 text-gray-200">x(&theta;) = (R - r) &middot; cos(&theta;) + d &middot; cos(((R - r) / r) &middot; &theta;)</p>
+              <p class="pl-2 border-l-2 border-cyan-500 text-gray-200">y(&theta;) = (R - r) &middot; sin(&theta;) - d &middot; sin(((R - r) / r) &middot; &theta;)</p>
             </div>
             <div class="pt-2 border-t border-gray-800">
-              <span class="text-indigo-400 font-bold block mb-0.5">Epitrochoid Equations:</span>
-              <p class="pl-2 border-l-2 border-indigo-400">x(t) = (R + r) &middot; cos(t) - d &middot; cos((R + r) &middot; t / r)</p>
-              <p class="pl-2 border-l-2 border-indigo-400">y(t) = (R + r) &middot; sin(t) - d &middot; sin((R + r) &middot; t / r)</p>
+              <span class="text-indigo-400 font-bold block mb-0.5">Epitrochoid (Wheel Outside Fixed Ring):</span>
+              <p class="text-gray-400 text-[10px]">Wheel Centre: C = ((R + r)cos&theta;, (R + r)sin&theta;)</p>
+              <p class="pl-2 border-l-2 border-indigo-400 text-gray-200">x(&theta;) = (R + r) &middot; cos(&theta;) - d &middot; cos(((R + r) / r) &middot; &theta;)</p>
+              <p class="pl-2 border-l-2 border-indigo-400 text-gray-200">y(&theta;) = (R + r) &middot; sin(&theta;) - d &middot; sin(((R + r) / r) &middot; &theta;)</p>
             </div>
           </div>
         </section>
 
-        <section>
-          <h4 class="font-bold text-white text-sm mb-1.5 flex items-center space-x-1.5">
-            <i class="fa-solid fa-infinity text-amber-400"></i>
-            <span>Symmetry & Petal Calculation (GCD)</span>
+        <!-- Section 3: Impossible d > r case -->
+        <section class="space-y-2">
+          <h4 class="font-bold text-white text-sm flex items-center space-x-1.5">
+            <i class="fa-solid fa-wand-magic-sparkles text-rose-400"></i>
+            <span>3. Extended Geometries (Pen Hole Outside Wheel d &gt; r)</span>
           </h4>
+          <p>
+            In a physical plastic spirograph kit, the pen hole must lie inside the physical boundaries of the wheel (<span class="font-mono text-cyan-400">d &le; r</span>). In our mathematical studio, setting <span class="font-mono text-rose-400">d &gt; r</span> simulates an extension arm extending outside the physical disc! This yields dramatic self-intersecting loops, starbursts, and wild trochoids impossible with standard toy sets.
+          </p>
+        </section>
+
+        <!-- Section 4: GCD and Petals -->
+        <section class="space-y-2">
+          <h4 class="font-bold text-white text-sm flex items-center space-x-1.5">
+            <i class="fa-solid fa-calculator text-amber-400"></i>
+            <span>4. Symmetry & Great Common Divisor (GCD)</span>
+          </h4>
+          <p>
+            The curve seamlessly closes back onto its starting point when the ratio <span class="font-mono text-cyan-400">R / r</span> simplifies to the irreducible fraction <span class="font-mono text-amber-400">a / b</span>:
+          </p>
           <div class="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-[11px] text-amber-200 space-y-1">
-            <p>1. Simplify the fraction <span class="font-mono font-bold">R / r</span> using its Greatest Common Divisor <span class="font-mono font-bold">GCD(R, r)</span> to <span class="font-mono font-bold">a / b</span>.</p>
-            <p>2. The simplified numerator <span class="font-mono font-bold text-amber-400">a</span> yields total petals/lobes.</p>
-            <p>3. The simplified denominator <span class="font-mono font-bold text-amber-400">b</span> indicates the full rotations needed to close the loop.</p>
+            <p>&bull; <strong>Total Lobes / Petals</strong> = Simplified Numerator <span class="font-mono font-bold text-amber-400">a</span></p>
+            <p>&bull; <strong>Full Rotations Needed to Close Curve</strong> = Simplified Denominator <span class="font-mono font-bold text-amber-400">b</span></p>
+            <p>&bull; Calculated via <span class="font-mono font-bold">GCD(R, r)</span></p>
           </div>
         </section>
+
       </div>
 
+      <!-- Modal Footer -->
       <div class="px-5 py-3 border-t border-gray-800 bg-gray-900/80 flex justify-end">
         <button id="btn-close-maths-2" class="px-4 py-1.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-white font-semibold text-xs transition">
-          Close Maths Guide
+          Close Maths Explainer
         </button>
       </div>
     </div>
@@ -459,17 +535,18 @@
         R: 180,
         r: 80,
         d: 100,
+        bgColour: 'black', // 'black' or 'white'
         colorMode: 'solid', // 'solid', 'rainbow', 'gradient'
         color1: '#06b6d4',
         grad1: '#06b6d4',
         grad2: '#ec4899',
         lineWidth: 1.8,
         opacity: 0.9,
-        speed: 45, // 1 to 100
-        resolution: 4, // 1 to 5
+        speed: 45,
+        resolution: 4,
         showGuides: true,
         darkMode: true,
-        layers: [], // Saved curve layers
+        layers: [],
         
         // Animation State
         animating: false,
@@ -479,7 +556,7 @@
         maxT: 0
       };
 
-      // DOM References
+      // DOM Elements
       const canvas = document.getElementById('spiroCanvas');
       const ctx = canvas.getContext('2d');
       const canvasContainer = document.getElementById('canvas-container');
@@ -490,6 +567,9 @@
       const tabGear = document.getElementById('tab-gear');
       const tabStyle = document.getElementById('tab-style');
       const tabLayers = document.getElementById('tab-layers');
+
+      const bgBlackBtn = document.getElementById('bg-black-btn');
+      const bgWhiteBtn = document.getElementById('bg-white-btn');
 
       const typeInsideBtn = document.getElementById('type-inside');
       const typeOutsideBtn = document.getElementById('type-outside');
@@ -547,13 +627,20 @@
       const tracingStatusText = document.getElementById('tracing-status-text');
 
       const btnThemeToggle = document.getElementById('btn-theme-toggle');
-      const btnExport = document.getElementById('btn-export');
+      const btnOpenExport = document.getElementById('btn-open-export');
+      const exportModal = document.getElementById('export-modal');
+      const btnCloseExport = document.getElementById('btn-close-export');
+      const btnCancelExport = document.getElementById('btn-cancel-export');
+      const btnDownloadNow = document.getElementById('btn-download-now');
+      const exportBgName = document.getElementById('export-bg-name');
+
       const btnMathsModal = document.getElementById('btn-maths-modal');
       const mathsModal = document.getElementById('maths-modal');
       const mathsModalContent = document.getElementById('maths-modal-content');
       const btnCloseMaths = document.getElementById('btn-close-maths');
       const btnCloseMaths2 = document.getElementById('btn-close-maths-2');
 
+      // Math Helpers
       function gcd(a, b) {
         a = Math.abs(Math.round(a));
         b = Math.abs(Math.round(b));
@@ -622,7 +709,7 @@
         const centerX = width / 2;
         const centerY = height / 2;
 
-        ctx.fillStyle = state.darkMode ? '#030712' : '#ffffff';
+        ctx.fillStyle = state.bgColour === 'black' ? '#030712' : '#ffffff';
         ctx.fillRect(0, 0, width, height);
 
         // Render Stored Layers
@@ -630,7 +717,7 @@
           drawCurvePath(ctx, layer, centerX, centerY, layer.maxT);
         });
 
-        // Active Animation / Current Curve
+        // Render Active Layer
         if (state.animating) {
           drawCurvePath(ctx, state, centerX, centerY, state.currentT);
           if (state.showGuides) {
@@ -696,53 +783,66 @@
       }
 
       function drawMechanicalGuides(context, params, cx, cy, t) {
-        const { R, r, d, mechanism } = params;
+        const { R, r, d, mechanism, bgColour } = params;
         const penPt = getPoint(t, params);
         const wheelCenter = getWheelCenter(t, params);
+        const isDarkCanvas = bgColour === 'black';
 
         context.save();
         context.translate(cx, cy);
 
-        // Fixed Outer Ring Guide
-        context.strokeStyle = state.darkMode ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.15)';
-        context.lineWidth = 1.2;
-        context.setLineDash([4, 4]);
+        // HIGH CONTRAST Fixed Outer Ring Guide
+        context.strokeStyle = isDarkCanvas ? '#06b6d4' : '#0284c7';
+        context.lineWidth = isDarkCanvas ? 2.2 : 2.5;
+        context.setLineDash([6, 4]);
         context.beginPath();
         context.arc(0, 0, R, 0, Math.PI * 2);
         context.stroke();
 
-        // Rolling Wheel Circle Guide
-        context.strokeStyle = state.darkMode ? 'rgba(6, 182, 212, 0.5)' : 'rgba(8, 145, 178, 0.5)';
-        context.lineWidth = 1.2;
+        // Outer Ring Teeth Detail
+        context.strokeStyle = isDarkCanvas ? 'rgba(6, 182, 212, 0.4)' : 'rgba(2, 132, 199, 0.3)';
+        context.lineWidth = 1;
         context.setLineDash([]);
+        context.beginPath();
+        context.arc(0, 0, R + (mechanism === 'inside' ? 3 : -3), 0, Math.PI * 2);
+        context.stroke();
+
+        // Rolling Wheel Circle Guide
+        context.strokeStyle = isDarkCanvas ? '#a855f7' : '#7e22ce';
+        context.lineWidth = 2;
+        context.setLineDash([4, 3]);
         context.beginPath();
         context.arc(wheelCenter.x, wheelCenter.y, r, 0, Math.PI * 2);
         context.stroke();
 
-        // Wheel Axis & Centre Marker
-        context.fillStyle = state.darkMode ? '#ffffff' : '#000000';
+        // Wheel Axis & Center Markers
+        context.fillStyle = isDarkCanvas ? '#ffffff' : '#000000';
+        context.setLineDash([]);
         context.beginPath();
-        context.arc(0, 0, 2.5, 0, Math.PI * 2);
-        context.arc(wheelCenter.x, wheelCenter.y, 2.5, 0, Math.PI * 2);
+        context.arc(0, 0, 3.5, 0, Math.PI * 2);
+        context.arc(wheelCenter.x, wheelCenter.y, 3.5, 0, Math.PI * 2);
         context.fill();
 
-        // Pen Arm / Hole Vector
-        context.strokeStyle = 'rgba(244, 63, 94, 0.8)';
-        context.lineWidth = 1.4;
+        // Pen Arm / Hole Line
+        context.strokeStyle = '#f43f5e';
+        context.lineWidth = 2.2;
         context.beginPath();
         context.moveTo(wheelCenter.x, wheelCenter.y);
         context.lineTo(penPt.x, penPt.y);
         context.stroke();
 
-        // Pen Tip Pointer
+        // Pen Tip Highlight
         context.fillStyle = '#f43f5e';
         context.beginPath();
-        context.arc(penPt.x, penPt.y, 4.5, 0, Math.PI * 2);
+        context.arc(penPt.x, penPt.y, 5, 0, Math.PI * 2);
         context.fill();
+        context.strokeStyle = '#ffffff';
+        context.lineWidth = 1.5;
+        context.stroke();
 
         context.restore();
 
-        // Update live coordinates readout
+        // Live stats update
         coordX.textContent = penPt.x.toFixed(1);
         coordY.textContent = penPt.y.toFixed(1);
         coordT.textContent = t.toFixed(2) + ' rad';
@@ -805,7 +905,6 @@
       function runAnimationLoop() {
         if (!state.animating || state.paused) return;
 
-        // Dynamic step scaling based on speed input slider
         const speedFactor = (state.speed / 100);
         const stepAngle = speedFactor * (0.05 + state.resolution * 0.02);
 
@@ -974,9 +1073,23 @@
           typeInsideBtn.className = 'py-1.5 text-xs font-semibold rounded-lg transition text-gray-400 hover:text-white';
         }
 
+        if (state.bgColour === 'black') {
+          bgBlackBtn.className = 'py-1.5 text-xs font-semibold rounded-lg border border-cyan-500 bg-gray-800 text-cyan-400 flex items-center justify-center space-x-1.5';
+          bgWhiteBtn.className = 'py-1.5 text-xs font-semibold rounded-lg border border-transparent text-gray-400 hover:text-white flex items-center justify-center space-x-1.5';
+          exportBgName.textContent = 'Black';
+        } else {
+          bgWhiteBtn.className = 'py-1.5 text-xs font-semibold rounded-lg border border-cyan-500 bg-gray-800 text-cyan-400 flex items-center justify-center space-x-1.5';
+          bgBlackBtn.className = 'py-1.5 text-xs font-semibold rounded-lg border border-transparent text-gray-400 hover:text-white flex items-center justify-center space-x-1.5';
+          exportBgName.textContent = 'White';
+        }
+
         updateUIStats();
         render();
       }
+
+      // Background Toggle Buttons
+      bgBlackBtn.addEventListener('click', () => { state.bgColour = 'black'; syncInputs(); });
+      bgWhiteBtn.addEventListener('click', () => { state.bgColour = 'white'; syncInputs(); });
 
       typeInsideBtn.addEventListener('click', () => { stopAnimation(); state.mechanism = 'inside'; syncInputs(); });
       typeOutsideBtn.addEventListener('click', () => { stopAnimation(); state.mechanism = 'outside'; syncInputs(); });
@@ -996,7 +1109,7 @@
       inputResolution.addEventListener('input', (e) => { state.resolution = parseInt(e.target.value); syncInputs(); });
       chkGuides.addEventListener('change', (e) => { state.showGuides = e.target.checked; render(); });
 
-      // Colour Options
+      // Colour Modes
       colorModeSolid.addEventListener('click', () => {
         state.colorMode = 'solid';
         solidColorContainer.classList.remove('hidden');
@@ -1104,10 +1217,7 @@
         render();
       });
 
-      btnAddLayer.addEventListener('click', () => {
-        addCurrentToLayers();
-      });
-
+      btnAddLayer.addEventListener('click', () => addCurrentToLayers());
       btnUndo.addEventListener('click', () => {
         if (state.layers.length > 0) {
           state.layers.pop();
@@ -1159,7 +1269,7 @@
         render();
       });
 
-      // Theme toggle
+      // Theme Toggle
       btnThemeToggle.addEventListener('click', () => {
         state.darkMode = !state.darkMode;
         if (state.darkMode) {
@@ -1170,7 +1280,73 @@
         render();
       });
 
-      // Maths Modal Controls
+      // Export Dialog Handling
+      let exportFormat = 'png';
+      const exportFmtPng = document.getElementById('export-fmt-png');
+      const exportFmtJpg = document.getElementById('export-fmt-jpg');
+
+      exportFmtPng.addEventListener('click', () => {
+        exportFormat = 'png';
+        exportFmtPng.className = 'py-2 rounded-xl border border-emerald-500 bg-emerald-500/10 text-emerald-400 font-semibold';
+        exportFmtJpg.className = 'py-2 rounded-xl border border-gray-700 text-gray-300 hover:border-gray-500';
+      });
+
+      exportFmtJpg.addEventListener('click', () => {
+        exportFormat = 'jpg';
+        exportFmtJpg.className = 'py-2 rounded-xl border border-emerald-500 bg-emerald-500/10 text-emerald-400 font-semibold';
+        exportFmtPng.className = 'py-2 rounded-xl border border-gray-700 text-gray-300 hover:border-gray-500';
+      });
+
+      btnOpenExport.addEventListener('click', () => {
+        exportModal.classList.remove('opacity-0', 'pointer-events-none');
+      });
+
+      function closeExportModal() {
+        exportModal.classList.add('opacity-0', 'pointer-events-none');
+      }
+
+      btnCloseExport.addEventListener('click', closeExportModal);
+      btnCancelExport.addEventListener('click', closeExportModal);
+
+      btnDownloadNow.addEventListener('click', () => {
+        const resSelect = parseInt(document.getElementById('export-res').value);
+        const bgOption = document.querySelector('input[name="export-bg"]:checked').value;
+
+        const exportCanvas = document.createElement('canvas');
+        exportCanvas.width = resSelect;
+        exportCanvas.height = resSelect;
+        const eCtx = exportCanvas.getContext('2d');
+
+        if (bgOption === 'current') {
+          eCtx.fillStyle = state.bgColour === 'black' ? '#030712' : '#ffffff';
+          eCtx.fillRect(0, 0, resSelect, resSelect);
+        } else if (exportFormat === 'jpg') {
+          // JPG does not support transparency
+          eCtx.fillStyle = '#ffffff';
+          eCtx.fillRect(0, 0, resSelect, resSelect);
+        }
+
+        const cx = resSelect / 2;
+        const cy = resSelect / 2;
+
+        state.layers.forEach(layer => {
+          drawCurvePath(eCtx, layer, cx, cy, layer.maxT);
+        });
+
+        if (state.layers.length === 0) {
+          const { maxAngle } = calculateSymmetry(state.R, state.r);
+          drawCurvePath(eCtx, state, cx, cy, maxAngle);
+        }
+
+        const link = document.createElement('a');
+        link.download = `spirograph-studio-${Date.now()}.${exportFormat}`;
+        link.href = exportCanvas.toDataURL(exportFormat === 'png' ? 'image/png' : 'image/jpeg', 0.95);
+        link.click();
+
+        closeExportModal();
+      });
+
+      // Maths Modal Handling
       function openMathsModal() {
         mathsModal.classList.remove('opacity-0', 'pointer-events-none');
         mathsModalContent.classList.remove('scale-95');
@@ -1187,35 +1363,6 @@
       btnCloseMaths2.addEventListener('click', closeMathsModal);
       mathsModal.addEventListener('click', (e) => {
         if (e.target === mathsModal) closeMathsModal();
-      });
-
-      // High Resolution Image Export
-      btnExport.addEventListener('click', () => {
-        const exportCanvas = document.createElement('canvas');
-        const exportSize = 1400;
-        exportCanvas.width = exportSize;
-        exportCanvas.height = exportSize;
-        const eCtx = exportCanvas.getContext('2d');
-
-        eCtx.fillStyle = state.darkMode ? '#030712' : '#ffffff';
-        eCtx.fillRect(0, 0, exportSize, exportSize);
-
-        const cx = exportSize / 2;
-        const cy = exportSize / 2;
-
-        state.layers.forEach(layer => {
-          drawCurvePath(eCtx, layer, cx, cy, layer.maxT);
-        });
-
-        if (state.layers.length === 0) {
-          const { maxAngle } = calculateSymmetry(state.R, state.r);
-          drawCurvePath(eCtx, state, cx, cy, maxAngle);
-        }
-
-        const link = document.createElement('a');
-        link.download = `spirograph-art-${Date.now()}.png`;
-        link.href = exportCanvas.toDataURL('image/png');
-        link.click();
       });
 
       // Init
